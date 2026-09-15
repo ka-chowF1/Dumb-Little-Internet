@@ -7,4 +7,11 @@ const projects = [
     url: 'https://ka-chowf1.github.io/67-calculator/',
     isNew: true,
   },
+  {
+    name: 'Excuse Generator',
+    emoji: '🕵️',
+    tagline: 'A perfectly good excuse. Believability sold separately.',
+    url: 'https://ka-chowf1.github.io/Excuse-Generator/',
+    isNew: true,
+  },
 ];
