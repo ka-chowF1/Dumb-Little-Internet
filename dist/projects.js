@@ -21,4 +21,11 @@ const projects = [
     url: 'https://ka-chowf1.github.io/Rock-Paper-Scissors/',
     isNew: true,
   },
+  {
+    name: 'Wordle for Dummies',
+    emoji: '🟩',
+    tagline: 'Five letters. Six chances. Surely you’ve got this.',
+    url: 'https://ka-chowf1.github.io/Wordle-For-Dummies/',
+    isNew: true,
+  },
 ];
