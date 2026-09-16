@@ -35,4 +35,11 @@ const projects = [
     url: 'https://ka-chowf1.github.io/Fortune-Cookie/',
     isNew: true,
   },
+  {
+    name: 'IQ Test',
+    emoji: '🧠',
+    tagline: 'Ten questions. One very confident assessment.',
+    url: 'https://ka-chowf1.github.io/IQ-Test/',
+    isNew: true,
+  },
 ];
