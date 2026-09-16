@@ -28,4 +28,4 @@ const projects = [
     url: 'https://ka-chowf1.github.io/Wordle-For-Dummies/',
     isNew: true,
   },
-];
+]; 
