@@ -28,4 +28,11 @@ const projects = [
     url: 'https://ka-chowf1.github.io/Wordle-For-Dummies/',
     isNew: true,
   },
-]; 
+  {
+    name: 'Fortune Cookie Generator',
+    emoji: '🥠',
+    tagline: 'A little wisdom. A little disrespect.',
+    url: 'https://ka-chowf1.github.io/Fortune-Cookie/',
+    isNew: true,
+  },
+];
