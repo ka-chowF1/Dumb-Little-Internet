@@ -17,7 +17,7 @@ function render(items){
 }
 test('first project opens the real calculator in a safe new tab',()=>{
  const {container,count}=render();const card=container.children[0];
- assert.equal(count.textContent,'02');assert.equal(card.href,'https://ka-chowf1.github.io/67-calculator/');
+ assert.equal(count.textContent,'03');assert.equal(card.href,'https://ka-chowf1.github.io/67-calculator/');
  assert.equal(card.target,'_blank');assert.equal(card.rel,'noopener noreferrer');assert.equal(card.children[1].textContent,'67 Calculator');
 });
 test('ten entries require no layout code changes, and absent taglines work',()=>{

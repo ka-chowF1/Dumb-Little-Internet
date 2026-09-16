@@ -14,4 +14,11 @@ const projects = [
     url: 'https://ka-chowf1.github.io/Excuse-Generator/',
     isNew: true,
   },
+  {
+    name: 'Rock Paper Scissors',
+    emoji: '🔫',
+    tagline: 'Three choices. One finger gun. Skill issue.',
+    url: 'https://ka-chowf1.github.io/Rock-Paper-Scissors/',
+    isNew: true,
+  },
 ];
