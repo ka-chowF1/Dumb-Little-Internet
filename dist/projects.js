@@ -42,4 +42,11 @@ const projects = [
     url: 'https://ka-chowf1.github.io/IQ-Test/',
     isNew: true,
   },
+  {
+    name: 'Horoscope Generator',
+    emoji: '🔮',
+    tagline: 'Written in the stars. Probably a typo.',
+    url: 'https://ka-chowf1.github.io/Horoscope-Generator/',
+    isNew: true,
+  },
 ];
