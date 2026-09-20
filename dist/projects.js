@@ -49,4 +49,11 @@ const projects = [
     url: 'https://ka-chowf1.github.io/Horoscope-Generator/',
     isNew: true,
   },
+  {
+    name: 'The Sorting Hat',
+    emoji: '🎩',
+    tagline: 'Five questions. Four houses. One very opinionated hat.',
+    url: 'https://ka-chowf1.github.io/Sorting-Hat/',
+    isNew: true,
+  },
 ];
