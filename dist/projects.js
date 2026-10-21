@@ -57,3 +57,26 @@ const projects = [
     isNew: true,
   },
 ];
+
+
+// Generated games: batch a34155ed-debd-431e-8370-c3ec908f1317
+[
+  {
+    "name": "Pigeon Parcel Parade",
+    "emoji": "🎮",
+    "tagline": "Help a very serious pigeon deliver four extremely silly parcels.",
+    "url": "https://ka-chowf1.github.io/Dumb-Little-Internet-Games/games/pigeon-parcel-parade-a34155ed-debd-431e-8370-c3ec908f1317/",
+    "isNew": true
+  },
+  {
+    "name": "Goblin Picnic Committee",
+    "emoji": "🎮",
+    "tagline": "Pick snacks for a goblin with very specific lunch opinions.",
+    "url": "https://ka-chowf1.github.io/Dumb-Little-Internet-Games/games/goblin-picnic-committee-a34155ed-debd-431e-8370-c3ec908f1317/",
+    "isNew": true
+  }
+].forEach(game => {
+  if (!projects.some(existing => existing.url === game.url)) {
+    projects.push(game);
+  }
+});
