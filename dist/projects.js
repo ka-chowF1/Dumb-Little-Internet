@@ -80,3 +80,26 @@ const projects = [
     projects.push(game);
   }
 });
+
+
+// Generated games: batch 48f91bb5-f4d7-4bb8-860b-60db5f82617d
+[
+  {
+    "name": "Dog Time Converter",
+    "emoji": "🐕",
+    "tagline": "Your five-minute errand was a whole saga to the dog.",
+    "url": "https://ka-chowf1.github.io/Dumb-Little-Internet-Games/games/dog-time-converter-48f91bb5-f4d7-4bb8-860b-60db5f82617d/",
+    "isNew": true
+  },
+  {
+    "name": "Laundry Label Decoder",
+    "emoji": "🧺",
+    "tagline": "Those tiny symbols have a lot to say about your sweater.",
+    "url": "https://ka-chowf1.github.io/Dumb-Little-Internet-Games/games/laundry-label-decoder-48f91bb5-f4d7-4bb8-860b-60db5f82617d/",
+    "isNew": true
+  }
+].forEach(game => {
+  if (!projects.some(existing => existing.url === game.url)) {
+    projects.push(game);
+  }
+});
