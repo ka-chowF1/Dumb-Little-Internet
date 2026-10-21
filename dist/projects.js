@@ -62,15 +62,8 @@ const projects = [
 // Generated games: batch c58dc78e-d9b4-4f77-907f-82434021514f
 [
   {
-    "name": "Meeting Translator",
-    "emoji": "🎮",
-    "tagline": "Corporate phrases, translated into what everyone means.",
-    "url": "https://ka-chowf1.github.io/Dumb-Little-Internet-Games/games/meeting-translator-c58dc78e-d9b4-4f77-907f-82434021514f/",
-    "isNew": true
-  },
-  {
     "name": "To-Do Tabloid",
-    "emoji": "🎮",
+    "emoji": "📰",
     "tagline": "Your ordinary tasks. Tomorrow’s front-page scandal.",
     "url": "https://ka-chowf1.github.io/Dumb-Little-Internet-Games/games/to-do-tabloid-c58dc78e-d9b4-4f77-907f-82434021514f/",
     "isNew": true
