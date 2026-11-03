@@ -1,19 +1,293 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Dumb Little Internet</title>
-<meta name="description" content="Small websites. Questionable purposes. A collection of dumb little things to click.">
-<meta property="og:title" content="The Dumb Little Internet"><meta property="og:description" content="Small websites. Questionable purposes. Come waste a perfectly good minute."><meta property="og:type" content="website">
+<meta name="description" content="Small websites. Serious purposes. Eight tiny browser games, every one of them rigged.">
+<meta property="og:title" content="The Dumb Little Internet">
+<meta property="og:description" content="Eight tiny browser games, every one of them rigged. Come waste a perfectly good minute.">
+<meta property="og:type" content="website">
 <meta name="theme-color" content="#f7f5ef">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23eeff63'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial' font-weight='900' font-size='37'%3E:)%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css"><script defer src="projects.js?v=sorting-hat"></script><script defer src="script.js"></script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23eeff63'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial' font-weight='900' font-size='34' fill='%2322221f' transform='rotate(90 32 32)'%3E:)%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/stack-sans-headline-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/stack-sans-text-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css">
+<script>document.documentElement.classList.add('js')</script>
+<script defer src="assets/js/games.js"></script>
+<script defer src="assets/js/home.js"></script>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "z7n9svtson");
+</script>
 </head>
 <body>
-<header class="masthead"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">:)</span><span>Dumb Little Internet</span></a><span class="header-note">INDEPENDENTLY UNNECESSARY.</span></header>
+
+<a class="skip" href="#games">Skip to the games</a>
+
+<header class="bar" id="top">
+  <span class="wordmark"><span class="mark" aria-hidden="true">:)</span><span translate="no">Dumb Little Internet</span></span>
+  <nav aria-label="Main"><a href="#games">The games</a><a href="#about">About</a></nav>
+</header>
+
 <main>
-<section class="intro" aria-labelledby="heading"><p class="eyebrow">A ONE OF A KIND COLLECTION</p><h1 id="heading">Small websites.<br>Serious purposes.</h1><p class="intro-copy">Little experiments from a corner of the internet.<br>Enjoy.</p><img class="hero-decal" src="images/internet-business.png" alt="Very important internet business — a smiling computer wearing a tie" width="1254" height="1254"></section>
-<section class="collection" aria-labelledby="collection-title"><div class="section-heading"><h2 id="collection-title">The collection <span id="project-count" class="count"></span></h2><span>GOOD FOR A CLICK. BAD FOR PRODUCTIVITY.</span></div><div id="projects" class="project-grid"></div><noscript><p>Enable JavaScript to see the collection, or visit <a href="https://ka-chowf1.github.io/67-calculator/" target="_blank" rel="noopener noreferrer">67 Calculator</a>.</p></noscript></section>
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <h1 id="hero-title"><span class="line"><span data-line style="--i:0">Small websites.</span></span> <span class="line"><span data-line style="--i:1">Serious purposes.</span></span></h1>
+    <p class="hero-sentence" data-load style="--d:420ms">The Dumb Little Internet is 8 tiny browser games, and every one of them is rigged. Come waste a perfectly good minute.</p>
+    <div class="hero-actions" data-load style="--d:540ms">
+      <a class="button" id="pick" href="#games">Pick a game for me</a>
+      <button class="text-button" id="spin-again" type="button" hidden>Spin again</button>
+    </div>
+    <p class="pick-status" id="pick-status" role="status" aria-live="polite"></p>
+  </div>
+  <div class="face-wrap" aria-hidden="true">
+    <div class="face" id="face">
+      <svg class="face-smile" id="face-smile" viewBox="0 0 120 60"><rect x="28" y="4" width="13" height="13" fill="#22221f"/><rect x="79" y="4" width="13" height="13" fill="#22221f"/><path d="M8 30 Q60 72 112 30 L112 38 Q60 86 8 38 Z" fill="#22221f"/></svg>
+      <span class="face-reel" id="face-reel"></span>
+    </div>
+  </div>
+</section>
+
+<div id="games">
+
+<!-- 67 CALCULATOR -->
+<section class="chapter ch-ink" id="calculator" aria-labelledby="t-calc">
+  <div class="chapter-copy">
+    <h2 id="t-calc" data-reveal>67 Calculator</h2>
+    <p class="lead" data-reveal>All roads lead to 67. Unless the math actually does.</p>
+    <p class="body" data-reveal>A fully working calculator with exactly one answer. Go on, try some sums on this one.</p>
+    <a class="button" data-reveal href="67-calculator/index.html" target="_blank" rel="noopener">Open the calculator</a>
+  </div>
+  <figure class="chapter-figure shutter fig-calc">
+    <div class="calc is-static" data-ui aria-hidden="true" inert>
+      <div class="calc-top"><span>TI-67+</span><span class="calc-solar"></span></div>
+      <div class="calc-screen">
+        <div class="calc-expr" id="calc-expr">12 + 55 =</div>
+        <output class="calc-out" id="calc-out" aria-live="polite">Error</output>
+      </div>
+      <div class="calc-keys" id="calc-keys">
+        <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" class="op" data-k="/" aria-label="Divide">÷</button>
+        <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" class="op" data-k="*" aria-label="Multiply">×</button>
+        <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" class="op" data-k="-" aria-label="Subtract">−</button>
+        <button type="button" class="op" data-k="C" aria-label="Clear">C</button><button type="button" data-k="0">0</button><button type="button" class="eq" data-k="=" aria-label="Equals">=</button><button type="button" class="op" data-k="+" aria-label="Add">+</button>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<!-- WORDLE FOR DUMMIES -->
+<section class="chapter ch-yellow" id="wordle" aria-labelledby="t-wordle">
+  <div class="chapter-copy">
+    <h2 id="t-wordle" data-reveal>Wordle for Dummies</h2>
+    <p class="lead" data-reveal>Five letters. Six chances. Surely you’ve got this.</p>
+    <p class="body" data-reveal>The real rules and a real list of 14,855 words. It should be easy. It is not.</p>
+    <a class="button" data-reveal href="wordle-for-dummies/index.html" target="_blank" rel="noopener">Play Wordle for Dummies</a>
+  </div>
+  <figure class="chapter-figure fig-wordle" data-reveal>
+    <div class="board" data-ui role="img" aria-label="A game in progress: CRANE scored no letters, HUMID scored U and M in the right spot and D in the wrong spot.">
+      <p class="row"><b class="t-absent">C</b><b class="t-absent">R</b><b class="t-absent">A</b><b class="t-absent">N</b><b class="t-absent">E</b></p>
+      <p class="row"><b class="t-absent">H</b><b class="t-correct">U</b><b class="t-correct">M</b><b class="t-absent">I</b><b class="t-present">D</b></p>
+      <p class="row row-typing"><b class="t-typed">D</b><b class="t-typed">U</b><b></b><b></b><b></b></p>
+      <p class="row"><b></b><b></b><b></b><b></b><b></b></p>
+    </div>
+  </figure>
+</section>
+
+<!-- EXCUSE GENERATOR -->
+<section class="chapter ch-blue" id="excuses" aria-labelledby="t-excuse">
+  <div class="chapter-copy">
+    <h2 id="t-excuse" data-reveal>Excuse Generator</h2>
+    <p class="lead" data-reveal>A perfectly good excuse. Believability sold separately.</p>
+    <p class="body" data-reveal>Pick your situation and the Department of Plausible Explanations handles the rest.</p>
+    <a class="button" data-reveal href="excuse-generator/index.html" target="_blank" rel="noopener">Get an excuse</a>
+  </div>
+  <figure class="chapter-figure fig-excuse" data-reveal>
+    <div class="slip is-static" data-ui aria-hidden="true" inert>
+      <p class="slip-head">Your official explanation</p>
+      <p class="slip-text" id="excuse-text">I had to walk my fish.</p>
+      <div class="slip-foot"><span id="excuse-cat">Being late</span><span class="slip-btn">Another one</span></div>
+    </div>
+  </figure>
+</section>
+
+<!-- FORTUNE COOKIE -->
+<section class="chapter ch-pink" id="fortune" aria-labelledby="t-fortune">
+  <div class="chapter-copy">
+    <h2 id="t-fortune" data-reveal>Fortune Cookie</h2>
+    <p class="lead" data-reveal>A little wisdom. A little disrespect.</p>
+    <p class="body" data-reveal>Crack one open and see what fate has to say. Fate has opinions.</p>
+    <a class="button" data-reveal href="fortune-cookie/index.html" target="_blank" rel="noopener">Crack a cookie</a>
+  </div>
+  <figure class="chapter-figure fig-fortune" data-reveal>
+    <div class="cookie" data-ui>
+      <svg viewBox="0 0 440 300" role="img" aria-label="A golden fortune cookie">
+        <defs><linearGradient id="dough" x1="0" y1="0" x2="0.6" y2="1"><stop stop-color="#ffe0a0"/><stop offset=".52" stop-color="#edb755"/><stop offset="1" stop-color="#c97a29"/></linearGradient><linearGradient id="fold"><stop stop-color="#b66a23"/><stop offset="1" stop-color="#e3a64a"/></linearGradient></defs>
+        <g class="half-l"><path d="M220 74 C176 19 97 43 56 103 C23 153 47 224 103 252 C139 270 158 249 166 216 L192 153 L220 144Z" fill="url(#dough)" stroke="#a96227" stroke-width="3"/><path d="M63 120 C95 74 159 72 211 112 C184 126 164 158 152 195 C123 171 88 146 63 120Z" fill="#fbd38a"/><path d="M220 97 C169 104 139 154 151 211 C163 175 182 151 220 144Z" fill="url(#fold)"/><path d="M74 109 C111 65 167 65 196 86" fill="none" stroke="#ffe8b5" stroke-width="8" stroke-linecap="round"/></g>
+        <g class="half-r"><path d="M220 74 C264 19 343 43 384 103 C417 153 393 224 337 252 C301 270 282 249 274 216 L248 153 L220 144Z" fill="url(#dough)" stroke="#a96227" stroke-width="3"/><path d="M377 120 C345 74 281 72 229 112 C256 126 276 158 288 195 C317 171 352 146 377 120Z" fill="#fbd38a"/><path d="M220 97 C271 104 301 154 289 211 C277 175 258 151 220 144Z" fill="url(#fold)"/><path d="M244 86 C291 63 337 79 359 106" fill="none" stroke="#ffe8b5" stroke-width="8" stroke-linecap="round"/></g>
+      </svg>
+      <p class="fortune-slip">Fortune favors the bold. You are neither.</p>
+    </div>
+  </figure>
+</section>
+
+<!-- HOROSCOPE -->
+<section class="chapter ch-ink" id="horoscope" aria-labelledby="t-horo">
+  <div class="chapter-copy">
+    <h2 id="t-horo" data-reveal>Horoscope</h2>
+    <p class="lead" data-reveal>Written in the stars. Probably a typo.</p>
+    <p class="body" data-reveal>Give it your birthday, answer a few essential questions, and receive the universe’s honest opinion of you.</p>
+    <a class="button" data-reveal href="horoscope/index.html" target="_blank" rel="noopener">Read my stars</a>
+  </div>
+  <figure class="chapter-figure fig-horo" data-reveal>
+    <div class="ask" data-ui>
+      <p class="ask-count">Cosmic question 5 of 5</p>
+      <p class="ask-q">Is a hot dog a sandwich?</p>
+      <div class="ask-answers"><span class="ask-btn">Yes</span><span class="ask-btn is-on">No</span></div>
+      <p class="ask-note">Noted.</p>
+    </div>
+  </figure>
+</section>
+
+<!-- IQ TEST -->
+<section class="chapter ch-lilac" id="iq" aria-labelledby="t-iq">
+  <div class="chapter-copy">
+    <h2 id="t-iq" data-reveal>IQ Test</h2>
+    <p class="lead" data-reveal>Ten questions. One very confident assessment.</p>
+    <p class="body" data-reveal>Rigorous questions, carefully chosen answers, and a score you will remember.</p>
+    <a class="button" data-reveal href="iq-test/index.html" target="_blank" rel="noopener">Test my brain</a>
+  </div>
+  <figure class="chapter-figure fig-iq" data-reveal>
+    <div class="quiz" data-ui>
+      <p class="quiz-meta"><span>Animal expertise</span><span>Question 10 of 10</span></p>
+      <div class="quiz-bar"><i></i></div>
+      <p class="quiz-q">What sound does a cow make?</p>
+      <ol class="quiz-a">
+        <li><span>A</span>CHICKEN JOCKY</li>
+        <li><span>B</span>L + ratio</li>
+        <li class="is-on"><span>C</span>Moo</li>
+        <li><span>D</span>34</li>
+      </ol>
+    </div>
+  </figure>
+</section>
+
+<!-- SORTING HAT -->
+<section class="chapter ch-blue" id="sorting-hat" aria-labelledby="t-hat">
+  <div class="chapter-copy">
+    <h2 id="t-hat" data-reveal>The Sorting Hat</h2>
+    <p class="lead" data-reveal>Five questions. Four houses. One very opinionated hat.</p>
+    <p class="body" data-reveal>An unofficial sorting ceremony run by a hat with absolutely no qualifications.</p>
+    <a class="button" data-reveal href="sorting-hat/index.html" target="_blank" rel="noopener">Sort me</a>
+  </div>
+  <figure class="chapter-figure fig-hat" data-reveal>
+    <div class="ask ask-paper" data-ui>
+      <p class="ask-count">Question 1 of 5</p>
+      <p class="ask-q">Do you believe in magic?</p>
+      <div class="ask-answers"><span class="ask-btn">Yes</span><span class="ask-btn">No</span></div>
+      <p class="ask-note">The hat is listening. Mostly.</p>
+    </div>
+  </figure>
+</section>
+
+<!-- ROCK PAPER SCISSORS -->
+<section class="chapter ch-orange" id="rock-paper-scissors" aria-labelledby="t-rps">
+  <div class="chapter-copy">
+    <h2 id="t-rps" data-reveal>Rock Paper Scissors</h2>
+    <p class="lead" data-reveal>Three choices. One finger gun. Skill issue.</p>
+    <p class="body" data-reveal>The classic, more or less. Pick your move and trust your instincts. Probably.</p>
+    <a class="button" data-reveal href="rock-paper-scissors/index.html" target="_blank" rel="noopener">Make my move</a>
+  </div>
+  <figure class="chapter-figure fig-rps" data-reveal>
+    <div class="score" data-ui role="img" aria-label="Scoreboard: you 0, opponent 12, after 12 rounds">
+      <div class="score-col"><span class="score-who">You</span><span class="score-n">0</span></div>
+      <div class="score-col"><span class="score-who">Opponent</span><span class="score-n">12</span></div>
+      <p class="score-foot">Round 13. Your move.</p>
+    </div>
+  </figure>
+</section>
+
+
+<!-- TO-DO TABLOID -->
+<section class="chapter ch-ink" id="to-do-tabloid" aria-labelledby="t-todo">
+  <div class="chapter-copy">
+    <h2 id="t-todo" data-reveal>To-Do Tabloid</h2>
+    <p class="lead" data-reveal>Your ordinary tasks. Tomorrow’s front-page scandal.</p>
+    <p class="body" data-reveal>Name one everyday task. We’ll make its delay sound like a national emergency.</p>
+    <a class="button" data-reveal href="to-do-tabloid/index.html" target="_blank" rel="noopener">Read the paper</a>
+  </div>
+  <figure class="chapter-figure fig-todo" data-reveal>
+    <div class="slip" data-ui>
+      <p class="slip-head">What’s the big story?</p>
+      <p class="slip-text">Name one everyday task.</p>
+      <div class="slip-foot"><span>Front page</span><span class="slip-btn">Print it</span></div>
+    </div>
+  </figure>
+</section>
+
+<!-- DOG TIME CONVERTER -->
+<section class="chapter ch-yellow" id="dog-time-converter" aria-labelledby="t-dog">
+  <div class="chapter-copy">
+    <h2 id="t-dog" data-reveal>Dog Time Converter</h2>
+    <p class="lead" data-reveal>Your five-minute errand was a whole saga to the dog.</p>
+    <p class="body" data-reveal>Tell it how long you were away. It tells you how long that felt to someone waiting by the door.</p>
+    <a class="button" data-reveal href="dog-time-converter/index.html" target="_blank" rel="noopener">Convert my time</a>
+  </div>
+  <figure class="chapter-figure fig-dog" data-reveal>
+    <div class="ask ask-paper" data-ui>
+      <p class="ask-count">How long were you away?</p>
+      <p class="ask-q">5 minutes away</p>
+      <p class="ask-note">Pick a time. Get the dog’s version.</p>
+    </div>
+  </figure>
+</section>
+
+<!-- LAUNDRY LABEL DECODER -->
+<section class="chapter ch-lilac" id="laundry-label-decoder" aria-labelledby="t-laundry">
+  <div class="chapter-copy">
+    <h2 id="t-laundry" data-reveal>Laundry Label Decoder</h2>
+    <p class="lead" data-reveal>Those tiny symbols have a lot to say about your sweater.</p>
+    <p class="body" data-reveal>Tap one symbol to get the practical instruction, and the garment’s very firm boundary.</p>
+    <a class="button" data-reveal href="laundry-label-decoder/index.html" target="_blank" rel="noopener">Decode a label</a>
+  </div>
+  <figure class="chapter-figure fig-laundry" data-reveal>
+    <div class="ask" data-ui>
+      <p class="ask-count">Pick a care symbol</p>
+      <p class="ask-q">Tap one symbol.</p>
+      <p class="ask-note">Practical instruction, firm boundary included.</p>
+    </div>
+  </figure>
+</section>
+
+</div>
 </main>
-<footer><span>Made with curiosity. And questionable judgment.</span><span>Small internet. Big “why?”</span></footer>
-</body></html>
+
+<footer class="foot" id="about" aria-labelledby="t-about">
+  <h2 class="foot-name" id="t-about">Dumb Little Internet</h2>
+  <div class="foot-row">
+    <div class="foot-about">
+      <p>Small websites with questionable purposes, made with curiosity and questionable judgment. Each one takes about a minute. None of them will make you more productive.</p>
+    </div>
+    <ul class="foot-games" id="foot-games">
+      <li><a class="foot-btn" href="67-calculator/index.html" target="_blank" rel="noopener">67 Calculator</a></li>
+      <li><a class="foot-btn" href="wordle-for-dummies/index.html" target="_blank" rel="noopener">Wordle for Dummies</a></li>
+      <li><a class="foot-btn" href="excuse-generator/index.html" target="_blank" rel="noopener">Excuse Generator</a></li>
+      <li><a class="foot-btn" href="fortune-cookie/index.html" target="_blank" rel="noopener">Fortune Cookie</a></li>
+      <li><a class="foot-btn" href="horoscope/index.html" target="_blank" rel="noopener">Horoscope</a></li>
+      <li><a class="foot-btn" href="iq-test/index.html" target="_blank" rel="noopener">IQ Test</a></li>
+      <li><a class="foot-btn" href="sorting-hat/index.html" target="_blank" rel="noopener">The Sorting Hat</a></li>
+      <li><a class="foot-btn" href="rock-paper-scissors/index.html" target="_blank" rel="noopener">Rock Paper Scissors</a></li>
+      <li><a class="foot-btn" href="to-do-tabloid/index.html" target="_blank" rel="noopener">To-Do Tabloid</a></li>
+      <li><a class="foot-btn" href="dog-time-converter/index.html" target="_blank" rel="noopener">Dog Time Converter</a></li>
+      <li><a class="foot-btn" href="laundry-label-decoder/index.html" target="_blank" rel="noopener">Laundry Label Decoder</a></li>
+    </ul>
+  </div>
+  <div class="foot-legal"><span>© 2026 The Dumb Little Internet. Independently unnecessary.</span><a href="#top" id="to-top">Back to the top</a></div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff8eb">
+  <title>Dog Time Converter</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #25243a;
+      --muted: #68677a;
+      --paper: #fff8eb;
+      --card: #ffffff;
+      --orange: #f27443;
+      --orange-dark: #bb4825;
+      --lavender: #f0edff;
+      --line: #e9e3d8;
+      font-family: ui-rounded, "Arial Rounded MT Bold", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px 16px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      background: var(--paper);
+    }
+    .app { width: min(100%, 510px); }
+    .topline {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 14px 4px;
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .topline .paw { font-size: 1.25rem; letter-spacing: 0; }
+    main {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--card);
+      box-shadow: 0 14px 38px #47362412;
+    }
+    .intro { padding: 28px 28px 20px; }
+    .hero { display: flex; align-items: center; gap: 15px; }
+    .dog {
+      flex: 0 0 64px;
+      width: 64px;
+      height: 64px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      background: #fff0db;
+      font-size: 2.35rem;
+    }
+    h1 { margin: 0; font-size: clamp(1.7rem, 7vw, 2.25rem); line-height: 1.06; letter-spacing: -.045em; }
+    .tagline { margin: 15px 0 0; color: var(--muted); font-size: 1rem; line-height: 1.5; }
+    .picker { padding: 20px 28px 24px; background: #fcfbf8; border-top: 1px solid var(--line); }
+    .section-label { margin: 0 0 12px; font-size: .9rem; font-weight: 800; }
+    .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    button {
+      min-height: 50px;
+      padding: 11px 12px;
+      border: 2px solid var(--line);
+      border-radius: 13px;
+      color: var(--ink);
+      background: white;
+      font: inherit;
+      font-size: .96rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: border-color .15s ease, background-color .15s ease, transform .15s ease;
+    }
+    button:hover { border-color: var(--orange); transform: translateY(-1px); }
+    button[aria-pressed="true"] { border-color: var(--orange); background: #fff0e8; color: var(--orange-dark); }
+    button:focus-visible, a:focus-visible { outline: 3px solid #5143b8; outline-offset: 3px; }
+    .result {
+      margin: 0 28px 24px;
+      padding: 20px;
+      border: 1px solid #ded8ff;
+      border-radius: 17px;
+      background: var(--lavender);
+    }
+    .result-label { margin: 0 0 7px; color: #5f549c; font-size: .76rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+    .result h2 { margin: 0 0 8px; font-size: 1.25rem; line-height: 1.25; letter-spacing: -.02em; }
+    .result-copy { margin: 0; color: #48455d; font-size: .98rem; line-height: 1.55; }
+    .disclaimer { margin: 12px 0 0; color: #656177; font-size: .77rem; line-height: 1.45; }
+    footer { padding: 15px 4px 0; text-align: center; color: var(--muted); font-size: .82rem; }
+    footer a { color: #5045a4; font-weight: 750; text-underline-offset: 3px; }
+    @media (max-width: 380px) {
+      body { padding: 16px 12px; }
+      .intro { padding: 23px 20px 17px; }
+      .picker { padding: 18px 20px 20px; }
+      .result { margin: 0 20px 20px; padding: 17px; }
+      .dog { flex-basis: 56px; width: 56px; height: 56px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+<style>body{padding-top:64px}.tdli-back{position:fixed;top:12px;left:12px;z-index:1000;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #22221f;border-radius:999px;background:#fffaf0;color:#22221f;font:600 13px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none}.tdli-back:hover{background:#eeff63}.tdli-back:focus-visible{outline:3px solid #075fc7;outline-offset:2px}</style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "z7n9svtson");
+</script>
+</head>
+<body>
+<a class="tdli-back" href="../index.html">← Dumb Little Internet</a>
+  <div class="app">
+    <p class="topline"><span class="paw" aria-hidden="true">🐕</span> The Dog Clock</p>
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div class="hero">
+          <div class="dog" aria-hidden="true">🐶</div>
+          <h1 id="page-title">Dog Time Converter</h1>
+        </div>
+        <p class="tagline">Your five-minute errand was a whole saga to the dog.</p>
+      </section>
+      <section class="picker" aria-labelledby="picker-title">
+        <h2 class="section-label" id="picker-title">How long were you away?</h2>
+        <div class="choices" role="group" aria-label="Choose how many minutes you were away">
+          <button type="button" data-minutes="5" aria-pressed="true">5 minutes</button>
+          <button type="button" data-minutes="15" aria-pressed="false">15 minutes</button>
+          <button type="button" data-minutes="30" aria-pressed="false">30 minutes</button>
+          <button type="button" data-minutes="60" aria-pressed="false">60 minutes</button>
+        </div>
+      </section>
+      <section class="result" aria-live="polite" aria-atomic="true" aria-label="Dog-time conversion">
+        <p class="result-label">Dog-clock reading</p>
+        <h2 id="result-title">5 minutes away</h2>
+        <p class="result-copy" id="result-copy">One full season of “They Left Forever”; the reunion paperwork is underway.</p>
+        <p class="disclaimer">A playful exaggeration, not a scientific dog-age calculation. Your dog would still like an apology.</p>
+      </section>
+    </main>
+    <footer></footer>
+  </div>
+  <script>
+    const readings = {
+      5: {
+        title: "5 minutes away",
+        copy: "One full season of “They Left Forever”; the reunion paperwork is underway."
+      },
+      15: {
+        title: "15 minutes away",
+        copy: "A full chapter in the door-watching chronicles. The hallway has been inspected 14 times."
+      },
+      30: {
+        title: "30 minutes away",
+        copy: "Three dog business days, including a brief period of staring at the door."
+      },
+      60: {
+        title: "60 minutes away",
+        copy: "A historical era known as The Long Walk Without Me. Historians are still processing it."
+      }
+    };
+    const buttons = document.querySelectorAll("button[data-minutes]");
+    const title = document.getElementById("result-title");
+    const copy = document.getElementById("result-copy");
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const minutes = button.dataset.minutes;
+        buttons.forEach((choice) => choice.setAttribute("aria-pressed", String(choice === button)));
+        title.textContent = readings[minutes].title;
+        copy.textContent = readings[minutes].copy;
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laundry Label Decoder</title>
+  <style>
+    :root { color-scheme: light; --ink:#292521; --muted:#716a63; --paper:#fffdf8; --wash:#eaf4f1; --accent:#245e53; --line:#ded8ce; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:var(--wash); color:var(--ink); font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    main { width:min(100% - 32px, 760px); margin:0 auto; padding:24px 0 40px; }
+    .back { display:inline-block; color:var(--accent); font-weight:700; text-decoration-thickness:2px; text-underline-offset:3px; margin-bottom:18px; }
+    .card { background:var(--paper); border:1px solid var(--line); border-radius:22px; padding:clamp(20px,5vw,38px); box-shadow:0 8px 24px #243e3510; }
+    .eyebrow { margin:0 0 6px; color:var(--accent); font-size:.8rem; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
+    h1 { margin:0; font-size:clamp(1.8rem,7vw,2.7rem); line-height:1.1; letter-spacing:-.04em; }
+    .intro { margin:12px 0 24px; color:#514b45; line-height:1.55; }
+    h2 { margin:0 0 12px; font-size:1.05rem; }
+    .choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .symbol-button { min-height:132px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:12px 8px; border:2px solid var(--line); border-radius:15px; background:#fff; color:var(--ink); font:inherit; cursor:pointer; text-align:center; transition:border-color .15s, background .15s, transform .15s; }
+    .symbol-button:hover { border-color:var(--accent); background:#f4faf7; transform:translateY(-1px); }
+    .symbol-button[aria-pressed="true"] { border-color:var(--accent); background:#e8f3ed; }
+    .symbol-button:focus-visible, a:focus-visible { outline:3px solid #b45309; outline-offset:3px; }
+    .symbol { width:48px; height:48px; color:#292521; }
+    .button-title { font-weight:800; line-height:1.2; }
+    .button-hint { color:var(--muted); font-size:.78rem; }
+    .result { margin-top:20px; min-height:123px; padding:17px 18px; border-radius:15px; background:#f3efe7; border-left:5px solid #c8bca7; }
+    .result.has-result { background:#edf6f0; border-left-color:var(--accent); }
+    .result-label { margin:0 0 5px; color:var(--accent); font-size:.75rem; font-weight:850; letter-spacing:.1em; text-transform:uppercase; }
+    .result h3 { margin:0 0 5px; font-size:1.15rem; }
+    .instruction { margin:0; line-height:1.45; }
+    .reaction { margin:9px 0 0; font-style:italic; color:#514b45; line-height:1.45; }
+    .footnote { margin:14px 0 0; color:var(--muted); font-size:.82rem; }
+    @media (min-width:540px) { .choices { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    @media (max-width:350px) { main { width:calc(100% - 20px); } .card { padding:18px 14px; } .choices { gap:7px; } .symbol-button { min-height:125px; padding:10px 5px; } }
+  </style>
+<style>body{padding-top:64px}.tdli-back{position:fixed;top:12px;left:12px;z-index:1000;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #22221f;border-radius:999px;background:#fffaf0;color:#22221f;font:600 13px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none}.tdli-back:hover{background:#eeff63}.tdli-back:focus-visible{outline:3px solid #075fc7;outline-offset:2px}</style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "z7n9svtson");
+</script>
+</head>
+<body>
+<a class="tdli-back" href="../index.html">← Dumb Little Internet</a>
+  <main>
+        <section class="card" aria-labelledby="page-title">
+      <p class="eyebrow">🧺 Garment care, translated</p>
+      <h1 id="page-title">Laundry Label Decoder</h1>
+      <p class="intro">Those tiny symbols have a lot to say about your sweater. Tap one to get the practical instruction—and the garment’s very firm boundary.</p>
+      <h2>Pick a care symbol</h2>
+      <div class="choices" aria-label="Laundry care symbols">
+        <button class="symbol-button" type="button" aria-pressed="false" data-title="Machine wash at 30°C" data-instruction="Machine-wash at 30°C (86°F) or colder." data-reaction="“Warm is a setting, not a personal challenge.”">
+          <svg class="symbol" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 16h32l-4 22H12L8 16Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M8 16c4 0 4 3 8 3s4-3 8-3 4 3 8 3 4-3 8-3" fill="none" stroke="currentColor" stroke-width="2.2"/><text x="24" y="32" text-anchor="middle" font-size="10" font-family="system-ui,sans-serif" font-weight="700" fill="currentColor">30°</text></svg>
+          <span class="button-title">Wash at 30°C</span><span class="button-hint">Tub with 30°</span>
+        </button>
+        <button class="symbol-button" type="button" aria-pressed="false" data-title="Do not bleach" data-instruction="Do not use bleach or other chlorine-based bleaching agents." data-reaction="“I would like to keep my current color, thanks.”">
+          <svg class="symbol" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7 43 39H5L24 7Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="m12 12 24 24" stroke="currentColor" stroke-width="3"/></svg>
+          <span class="button-title">Do not bleach</span><span class="button-hint">Crossed-out triangle</span>
+        </button>
+        <button class="symbol-button" type="button" aria-pressed="false" data-title="Do not tumble dry" data-instruction="Do not put this garment in a tumble dryer. Air-dry it instead." data-reaction="“I will not be entering the hot spinning cylinder.”">
+          <svg class="symbol" viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="7" width="34" height="34" rx="1" fill="none" stroke="currentColor" stroke-width="2.6"/><circle cx="24" cy="24" r="10" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="m12 12 24 24" stroke="currentColor" stroke-width="3"/></svg>
+          <span class="button-title">Do not tumble dry</span><span class="button-hint">Crossed-out dryer</span>
+        </button>
+        <button class="symbol-button" type="button" aria-pressed="false" data-title="Line dry" data-instruction="Hang the garment up to dry on a line." data-reaction="“Fresh air and a little personal space. We’ll be fine.”">
+          <svg class="symbol" viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="7" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M24 12v24" stroke="currentColor" stroke-width="2.8"/></svg>
+          <span class="button-title">Line dry</span><span class="button-hint">Square with a vertical line</span>
+        </button>
+        <button class="symbol-button" type="button" aria-pressed="false" data-title="Low iron" data-instruction="Use a low-temperature iron setting." data-reaction="“A little smoothing is fine; do not bring the full power of the sun.”">
+          <svg class="symbol" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 32h33l-4-11c-1-4-5-7-10-7H19c-5 0-8 4-9 9L8 32Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M8 32h33" stroke="currentColor" stroke-width="2.6"/><circle cx="24" cy="23" r="2" fill="currentColor"/></svg>
+          <span class="button-title">Low iron</span><span class="button-hint">Iron with one dot</span>
+        </button>
+        <button class="symbol-button" type="button" aria-pressed="false" data-title="Hand wash" data-instruction="Gently wash by hand; avoid machine washing." data-reaction="“Your machine and I need some space.”">
+          <svg class="symbol" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 20h32l-4 18H12L8 20Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M16 15c1-3 3-4 5-4l4 9M23 13c2-2 4-2 6 0l3 7M30 16c2-1 4 0 5 2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M12 25c3-2 5 2 8 0s5 2 8 0 5 2 8 0" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+          <span class="button-title">Hand wash</span><span class="button-hint">Hand over a wash tub</span>
+        </button>
+      </div>
+      <section class="result" id="result" aria-live="polite" aria-atomic="true">
+        <p class="result-label">Decoder says</p>
+        <h3 id="result-title">Choose a symbol</h3>
+        <p class="instruction" id="instruction">Your garment’s care instructions will show up here.</p>
+        <p class="reaction" id="reaction">It has been waiting for a chance to set a boundary.</p>
+      </section>
+      <p class="footnote">Tap another symbol any time to decode it, too.</p>
+    </section>
+  </main>
+  <script>
+    const buttons = document.querySelectorAll('.symbol-button');
+    const result = document.getElementById('result');
+    const title = document.getElementById('result-title');
+    const instruction = document.getElementById('instruction');
+    const reaction = document.getElementById('reaction');
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        buttons.forEach((option) => option.setAttribute('aria-pressed', String(option === button)));
+        title.textContent = button.dataset.title;
+        instruction.textContent = button.dataset.instruction;
+        reaction.textContent = button.dataset.reaction;
+        result.classList.add('has-result');
+      });
+    });
+  </script>
+</body>
+</html>
