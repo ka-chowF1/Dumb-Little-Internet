@@ -547,19 +547,8 @@
   .tell-btn { display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 20px; border-radius: 3px; border: 1px solid rgba(255,255,255,.28); background: rgba(20,22,22,.4); color: #fff; font: inherit; font-size: 13px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; cursor: pointer; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: background-color .15s; }
   .tell-btn:hover, .tell-btn[aria-expanded="true"] { background: rgba(20,22,22,.65); }
   .tell-btn svg { width: 17px; height: 17px; }
-  .tell-panel { position: absolute; top: calc(100% + 10px); right: 0; width: min(340px, calc(100vw - 80px)); padding: 20px; border-radius: 10px; background: rgba(22,24,24,.92); border: 1px solid rgba(255,255,255,.16); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 30px 60px rgba(0,0,0,.5); }
-  .tell-panel[hidden] { display: none; }
-  .tell-title { margin: 0; font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
-  .tell-sub { margin: 6px 0 14px; font-size: 14px; line-height: 1.45; color: rgba(255,255,255,.72); }
-  .tell-link { display: flex; gap: 8px; }
-  .tell-link input { flex: 1; min-width: 0; height: 44px; padding: 0 12px; border-radius: 3px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.07); color: #fff; font: inherit; font-size: 13px; }
-  .tell-panel button, .tell-panel a { height: 44px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px; border: 0; background: #fff; color: #1a1d1e; font: inherit; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; cursor: pointer; }
-  .tell-panel button:hover, .tell-panel a:hover { background: #ece9e1; }
-  .tell-row { display: flex; gap: 8px; margin-top: 8px; }
-  .tell-row > * { flex: 1; background: rgba(255,255,255,.12) !important; color: #fff !important; }
-  .tell-row > *:hover { background: rgba(255,255,255,.2) !important; }
-  .tell-row > [hidden] { display: none; }
-  .tell-note { margin: 10px 0 0; min-height: 1.2em; font-size: 13px; color: rgba(255,255,255,.8); }
+  .tell-toast { position: absolute; top: calc(100% + 8px); right: 0; margin: 0; padding: 0; white-space: nowrap; font-size: 13px; font-weight: 600; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
+  .tell-toast:not(:empty) { padding: 9px 14px; border-radius: 3px; background: rgba(20,22,22,.85); border: 1px solid rgba(255,255,255,.18); }
   @media (max-width: 520px) { .brand-name { display: none; } }
   @media (max-width: 640px) { .tell-btn { height: 40px; padding: 0 14px; font-size: 11px; letter-spacing: .06em; } .tell-btn svg { width: 15px; height: 15px; } }
 </style>
@@ -585,21 +574,11 @@
     </div>
 
     <div class="tell" id="tell">
-      <button class="tell-btn" id="tell-btn" type="button" aria-expanded="false" aria-controls="tell-panel">
+      <button class="tell-btn" id="tell-btn" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
         Tell a friend!
       </button>
-      <div class="tell-panel" id="tell-panel" role="dialog" aria-label="Tell a friend" hidden>
-        <p class="tell-title">Tell a friend!</p>
-        <p class="tell-sub">Send them the link and let them waste a perfectly good minute.</p>
-        <div class="tell-link"><input id="tell-url" type="text" readonly aria-label="Link to share"><button type="button" id="tell-copy">Copy</button></div>
-        <div class="tell-row">
-          <button type="button" id="tell-share" hidden>Share…</button>
-          <a id="tell-sms" href="#">Text</a>
-          <a id="tell-mail" href="#">Email</a>
-        </div>
-        <p class="tell-note" id="tell-note" role="status" aria-live="polite"></p>
-      </div>
+      <p class="tell-toast" id="tell-toast" role="status" aria-live="polite"></p>
     </div>
 
     <div class="float-card" aria-hidden="true"><i style="background:#e9e8e3"></i><i style="background:#a8ada3"></i><i style="background:#5a6a60"></i><i style="background:#2d3d42"></i><i style="background:#1c2629"></i></div>
@@ -1145,38 +1124,9 @@
 })();
 </script>
 
+<script src="assets/js/share.js"></script>
 <script>
-(function () {
-  var btn = document.getElementById('tell-btn'), panel = document.getElementById('tell-panel');
-  if (!btn || !panel) return;
-  var url = document.getElementById('tell-url'), note = document.getElementById('tell-note');
-  var LIVE = 'https://ka-chowf1.github.io/dumb-little-internet/';
-  var link = /^https?:$/.test(location.protocol) ? location.origin + location.pathname.replace(/index\.html$/, '') : LIVE;
-  var text = 'Time to kill? Eleven tiny games, all good fun:';
-  url.value = link;
-  document.getElementById('tell-sms').href = 'sms:?&body=' + encodeURIComponent(text + ' ' + link);
-  document.getElementById('tell-mail').href = 'mailto:?subject=' + encodeURIComponent('A tiny game for your day') + '&body=' + encodeURIComponent(text + '\n\n' + link);
-  var share = document.getElementById('tell-share');
-  if (navigator.share) {
-    share.hidden = false;
-    share.addEventListener('click', function () {
-      navigator.share({ title: 'The Dumb Little Internet', text: text, url: link }).catch(function () {});
-    });
-  }
-  function open(on) {
-    panel.hidden = !on; btn.setAttribute('aria-expanded', String(on)); note.textContent = '';
-    if (on) { url.focus(); url.select(); }
-  }
-  btn.addEventListener('click', function (e) { e.stopPropagation(); open(panel.hidden); });
-  panel.addEventListener('click', function (e) { e.stopPropagation(); });
-  document.addEventListener('click', function () { if (!panel.hidden) open(false); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !panel.hidden) { open(false); btn.focus(); } });
-  document.getElementById('tell-copy').addEventListener('click', function () {
-    function done(ok) { note.textContent = ok ? 'Link copied. Go forth and share.' : 'Press Ctrl+C (or Cmd+C) to copy the link.'; }
-    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(link).then(function () { done(true); }, function () { url.select(); done(false); });
-    else { url.select(); try { done(document.execCommand('copy')); } catch (err) { done(false); } }
-  });
-})();
+tdliShare(document.getElementById('tell-btn'), function () { return { text: 'Time to kill? Eleven tiny games, all good fun:' }; }, document.getElementById('tell-toast'));
 </script>
 </body>
 </html>

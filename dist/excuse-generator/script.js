@@ -18,9 +18,21 @@ document.querySelector('#excuse-form').addEventListener('submit', event => {
   lastByCategory.set(name, excuse);
   const text = document.createElement('p');
   text.className = 'excuse'; text.textContent = excuse;
-  result.replaceChildren(text);
+  result.replaceChildren(text, shareRow(excuse));
   document.querySelector('#result-category').textContent = name.toUpperCase();
   result.classList.remove('revealed');
   void result.offsetWidth;
   result.classList.add('revealed');
 });
+
+function shareRow(excuse) {
+  const row = document.createElement('div');
+  row.className = 'share-row';
+  const button = document.createElement('button');
+  button.type = 'button'; button.className = 'share-btn'; button.textContent = 'Share with a friend';
+  const status = document.createElement('span');
+  status.className = 'share-status'; status.setAttribute('role', 'status');
+  row.append(button, status);
+  tdliShare(button, () => ({ title: 'An excuse from the Dumb Little Internet', text: '\u201c' + excuse + '\u201d \u2014 an excuse from the Dumb Little Internet. Get yours:' }), status);
+  return row;
+}
