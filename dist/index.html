@@ -399,7 +399,6 @@
   .hero > * { position: relative; }
   .hero > .brand { position: absolute; }
   .hero > .taskbar { position: absolute; }
-  .hero > .float-card { position: absolute; }
   .brand-name { text-transform: uppercase; letter-spacing: .18em; font-weight: 500; font-size: 13px; }
   .eyebrow { margin: 0 0 clamp(8px, 1.4vh, 16px); font-family: var(--sq-serif); font-style: italic; font-size: clamp(18px, 1.7vw, 26px); color: rgba(255,255,255,.82); letter-spacing: .005em; }
   .copy h1 { font-weight: 400; letter-spacing: -0.05em; line-height: .96; text-shadow: 0 2px 40px rgba(0,0,0,.25); }
@@ -413,9 +412,6 @@
   .result a { border-radius: 3px; background: #fff; color: var(--sq-ink); text-transform: uppercase; letter-spacing: .08em; font-size: 12px; }
 
   /* floating glass swatch card, like the palette card in the reference */
-  .float-card { top: clamp(18px, 3.4vh, 36px); left: 33%; display: flex; width: clamp(190px, 17vw, 270px); height: clamp(44px, 5.4vh, 62px); padding: 8px; gap: 0; border-radius: 6px; background: linear-gradient(135deg, rgba(255,255,255,.2), rgba(255,255,255,.06)); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 18px 40px rgba(0,0,0,.28); }
-  .float-card i { flex: 1; display: block; }
-  .float-card i:first-child { border-radius: 3px 0 0 3px; } .float-card i:last-child { border-radius: 0 3px 3px 0; }
 
   /* the wheel in the same tones */
   .wheel { filter: drop-shadow(0 40px 50px rgba(0,0,0,.38)) drop-shadow(0 0 40px rgba(240,226,196,.16)); }
@@ -509,7 +505,7 @@
   .chapter-figure > .cookie { box-shadow: none; background: none; border: 0; }
   .games .chapter-copy .lead { margin-top: 1.25rem; } .games .chapter-copy .body { margin-top: .9rem; }
 
-  @media (max-width: 1100px) { .float-card { display: none; } }
+ 
   @media (max-width: 900px) { .dock a { padding: 10px 14px; font-size: 14px; } .clock { display: none; } }
   @media (max-width: 640px) { .chapter { width: calc(100% - 20px); border-radius: 12px; } .btn { padding: 0 22px; } }
 
@@ -613,8 +609,6 @@
       </button>
       <p class="tell-toast" id="tell-toast" role="status" aria-live="polite"></p>
     </div>
-
-    <div class="float-card" aria-hidden="true"><i style="background:#e9e8e3"></i><i style="background:#a8ada3"></i><i style="background:#5a6a60"></i><i style="background:#2d3d42"></i><i style="background:#1c2629"></i></div>
 
     <div class="copy">
       <p class="eyebrow">Eleven tiny games</p>
