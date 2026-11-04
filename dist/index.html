@@ -2,20 +2,546 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Dumb Little Internet</title>
-<meta name="description" content="Small websites. Serious purposes. Eight tiny browser games, every one of them rigged.">
-<meta property="og:title" content="The Dumb Little Internet">
-<meta property="og:description" content="Eight tiny browser games, every one of them rigged. Come waste a perfectly good minute.">
-<meta property="og:type" content="website">
-<meta name="theme-color" content="#f7f5ef">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23eeff63'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial' font-weight='900' font-size='34' fill='%2322221f' transform='rotate(90 32 32)'%3E:)%3C/text%3E%3C/svg%3E">
-<link rel="preload" href="assets/fonts/stack-sans-headline-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/stack-sans-text-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/site.css">
-<script>document.documentElement.classList.add('js')</script>
-<script defer src="assets/js/games.js"></script>
-<script defer src="assets/js/home.js"></script>
+<meta name="description" content="Eleven tiny games. Spin the wheel or pick your own.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23eeff63' stroke='%2322221f' stroke-width='4'/%3E%3Ccircle cx='36' cy='42' r='5' fill='%2322221f'/%3E%3Ccircle cx='64' cy='42' r='5' fill='%2322221f'/%3E%3Cpath d='M30 60Q50 80 70 60' fill='none' stroke='%2322221f' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #525d68;
+    --deep: #14181d;
+    --desk: #171c22;
+    --text: #ffffff;
+    --muted: rgba(255, 255, 255, 0.78);
+    --glass: rgba(255, 255, 255, 0.09);
+    --glass-strong: rgba(255, 255, 255, 0.16);
+    --line: rgba(255, 255, 255, 0.3);
+    --wire-x: min(380px, 33vw);   /* how far right of centre the cable runs */
+    --font: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--desk); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid #ffffff; outline-offset: 3px; }
+
+  /* ---------- Monitor ---------- */
+  main { position: relative; }
+  .stage {
+    min-height: 100vh; min-height: 100svh;
+    display: flex;
+    padding: clamp(10px, 1.6vw, 22px) clamp(10px, 1.6vw, 22px) clamp(8px, 1.2vh, 14px);
+    flex-direction: column; align-items: stretch;
+    background: var(--desk);
+  }
+  .monitor {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+    padding: clamp(8px, 0.9vw, 14px) clamp(8px, 0.9vw, 14px) 0;
+    border-radius: clamp(14px, 1.8vw, 26px);
+    background: #0b0e11;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 50px rgba(0, 0, 0, 0.45);
+  }
+  .stand { flex: none; display: flex; flex-direction: column; align-items: center; }
+  .neck { width: clamp(70px, 9vw, 130px); height: clamp(22px, 3.6vh, 40px); background: linear-gradient(90deg, #1a2026, #3a4550 50%, #1a2026); clip-path: polygon(8% 0, 92% 0, 100% 100%, 0 100%); }
+  .foot { width: clamp(180px, 24vw, 340px); height: 10px; border-radius: 999px 999px 4px 4px; background: linear-gradient(#4a5662, #232b33); box-shadow: 0 6px 14px rgba(0,0,0,.4); }
+  .chin { position: relative; flex: none; height: clamp(20px, 2.4vw, 30px); display: flex; align-items: center; justify-content: flex-end; padding-right: clamp(16px, 3vw, 36px); }
+  .led { width: 5px; height: 5px; border-radius: 50%; background: rgba(255, 255, 255, 0.55); box-shadow: 0 0 6px rgba(255, 255, 255, 0.4); }
+  .plug { position: absolute; left: calc(50% + var(--wire-x)); width: 26px; height: 14px; margin-left: -13px; border-radius: 4px; background: #222a31; border: 1px solid #3b4651; }
+  .plug-top { bottom: -12px; }
+  .plug-kb { top: -10px; }
+  .cord { position: absolute; z-index: 6; pointer-events: none; overflow: visible; }
+
+  /* ---------- Screen (first view) ---------- */
+  .hero {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    border-radius: clamp(8px, 1vw, 14px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: clamp(24px, 4vw, 64px);
+    align-items: center;
+    padding: clamp(76px, 9vh, 100px) clamp(24px, 5vw, 88px) clamp(72px, 9vh, 96px);
+    overflow: hidden;
+    background:
+      radial-gradient(48% 62% at 72% 46%, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0) 70%),
+      var(--bg);
+  }
+  .brand {
+    position: absolute;
+    top: clamp(20px, 3.6vh, 38px);
+    left: clamp(24px, 5vw, 88px);
+    display: flex; align-items: center; gap: 14px;
+    font-size: 15px; font-weight: 650; letter-spacing: 0.01em;
+  }
+  .brand svg { width: 52px; height: 52px; display: block; }
+
+  .copy { align-self: end; max-width: 46rem; }
+  .copy h1 {
+    margin: 0;
+    font-size: clamp(44px, 6.1vw, 104px);
+    line-height: 0.98;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    text-shadow: 0 0 28px rgba(255, 255, 255, 0.22);
+  }
+  .lede { margin: clamp(14px, 2vh, 22px) 0 0; max-width: 30ch; font-size: clamp(16px, 1.35vw, 20px); line-height: 1.45; color: var(--muted); }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(20px, 3.2vh, 32px); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 52px; padding: 0 26px;
+    border-radius: 999px; border: 1px solid transparent;
+    font: inherit; font-size: 16px; font-weight: 650; text-decoration: none;
+    cursor: pointer; transition: transform 0.15s ease, background-color 0.15s ease;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn svg { width: 18px; height: 18px; }
+  .btn-primary { background: #ffffff; color: var(--deep); }
+  .btn-primary:hover { background: #eef1f4; }
+  .btn-ghost { background: var(--glass); border-color: var(--line); color: #ffffff; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .btn-ghost:hover { background: var(--glass-strong); }
+  .btn[disabled] { opacity: 0.65; cursor: progress; }
+
+  .result-slot { min-height: 62px; margin-top: 18px; }   /* reserved so the headline never jumps */
+  .result {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px;
+    width: fit-content; max-width: 100%;
+    padding: 10px 10px 10px 20px;
+    border-radius: 18px; background: var(--glass); border: 1px solid var(--line);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  .result[hidden] { display: none; }
+  .result .r-label { color: var(--muted); font-size: 14px; }
+  .result strong { font-size: 18px; font-weight: 700; }
+  .result a { display: inline-flex; align-items: center; height: 38px; padding: 0 18px; border-radius: 999px; background: #ffffff; color: var(--deep); font-size: 14px; font-weight: 650; text-decoration: none; }
+
+  /* ---------- Wheel ---------- */
+  .wheel-wrap { justify-self: center; }
+  .wheel {
+    display: block;
+    height: min(calc(100vh - 350px), 53vw);
+    height: min(calc(100svh - 350px), 53vw);
+    width: auto;
+    aspect-ratio: 620 / 720;
+    overflow: visible;
+    filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.22));
+  }
+  .rot { transform-origin: 310px 330px; transition: transform 5.6s cubic-bezier(0.12, 0.7, 0.1, 1); will-change: transform; }
+  .glass { fill: rgba(255, 255, 255, 0.08); stroke: rgba(255, 255, 255, 0.4); stroke-width: 1.5; }
+  .slice { fill: rgba(255, 255, 255, 0.13); stroke: rgba(255, 255, 255, 0.36); stroke-width: 1.25; transition: fill 0.35s ease; }
+  .seg.alt .slice { fill: rgba(255, 255, 255, 0.05); }
+  .seg.win .slice { fill: #ffffff; }
+  .lbl { font-family: var(--font); font-weight: 700; fill: #ffffff; letter-spacing: -0.01em; transition: fill 0.35s ease; }
+  .seg.win .lbl { fill: var(--deep); }
+  .hub { cursor: pointer; }
+  .hub-face { fill: rgba(82, 93, 104, 0.96); stroke: rgba(255, 255, 255, 0.75); stroke-width: 2; transition: fill 0.2s ease; }
+  .hub:hover .hub-face { fill: rgba(104, 116, 128, 0.98); }
+  .hub:focus-visible { outline: none; }
+  .hub:focus-visible .hub-face { stroke: #ffffff; stroke-width: 5; }
+  .hub-text { font-family: var(--font); font-weight: 700; font-size: 22px; letter-spacing: 0.12em; fill: #ffffff; pointer-events: none; }
+
+  /* ---------- Taskbar ---------- */
+  .taskbar {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 56px;
+    display: flex; align-items: center; justify-content: center; gap: 22px;
+    background: rgba(18, 23, 28, 0.55);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  }
+  .taskbar svg { width: 20px; height: 20px; display: block; opacity: 0.85; }
+  .clock { position: absolute; right: clamp(16px, 2vw, 28px); top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; font-size: 12px; line-height: 1.3; color: var(--muted); font-variant-numeric: tabular-nums; }
+  /* ---------- Keyboard (below the fold) ---------- */
+  .desk {
+    min-height: 100vh; min-height: 100svh;
+    scroll-snap-align: start;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: clamp(24px, 5vh, 48px);
+    padding: clamp(56px, 9vh, 96px) 4vw;
+    background: var(--desk);
+  }
+  .desk-head { text-align: center; }
+  .desk-head h2 { margin: 0; font-size: clamp(36px, 4.6vw, 68px); line-height: 1; font-weight: 700; letter-spacing: -0.03em; }
+  .desk-head p { margin: 14px 0 0; color: rgba(255, 255, 255, 0.7); font-size: clamp(15px, 1.2vw, 18px); }
+
+  .kb {
+    position: relative;
+    --pad: clamp(10px, 1.8vw, 22px);
+    --gap: clamp(3px, 0.5vw, 7px);
+    --kbw: min(1080px, calc(92vw - 2 * var(--pad)));
+    --u: calc((var(--kbw) - 14 * var(--gap)) / 15);
+    width: calc(var(--kbw) + 2 * var(--pad));
+    padding: var(--pad);
+    border-radius: clamp(14px, 1.8vw, 24px);
+    background: #0f1317;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .kb-row { display: flex; gap: var(--gap); margin-bottom: var(--gap); }
+  .kb-row:last-child { margin-bottom: 0; }
+  .k {
+    --n: 1;
+    flex: 0 0 auto;
+    width: calc(var(--n) * var(--u) + (var(--n) - 1) * var(--gap));
+    height: calc(var(--u) * 0.9);
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 4px;
+    border: 1px solid #2c343d; border-radius: clamp(5px, 0.7vw, 9px);
+    background: #232a32; color: #8f9ba7;
+    font: 600 clamp(9px, calc(var(--u) * 0.2), 14px) / 1.1 var(--font);
+    text-align: center; text-decoration: none;
+    box-shadow: 0 3px 0 #080a0d;
+  }
+  .k.fn { height: calc(var(--u) * 0.6); font-size: clamp(8px, calc(var(--u) * 0.16), 12px); }
+  button.k { cursor: pointer; }
+  button.k:hover { background: #2c343d; color: #ffffff; }
+  .k.g {
+    position: relative; flex-direction: column;
+    background: #e9edf1; border-color: #ffffff; color: #11161b;
+    font-weight: 700; font-size: clamp(10px, calc(var(--u) * 0.22), 16px);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+  }
+  .k.g .n { position: absolute; top: 5px; left: 8px; font-size: clamp(8px, calc(var(--u) * 0.15), 11px); font-weight: 600; color: #6a7783; font-variant-numeric: tabular-nums; }
+  .k.g .t { padding-top: 6px; }
+  .k.g:hover { background: #ffffff; transform: translateY(-2px); box-shadow: 0 5px 0 #080a0d; }
+  .k.g:active { transform: translateY(2px); box-shadow: 0 1px 0 #080a0d; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; row-gap: 20px; padding-top: 92px; padding-bottom: 76px; align-content: start; }
+    .wheel-wrap { order: -1; }
+    .wheel { height: min(32vh, 96vw); height: min(32svh, 96vw); }
+    .copy { align-self: start; }
+    .result-slot { min-height: 0; }
+  }
+  @media (max-width: 760px) {
+    .desk-head p { display: none; }
+    .kb-row { flex-wrap: wrap; }
+    .k:not(.g) { display: none; }
+    .kb-row:not(:has(.g)) { display: none; }
+    .k.g { width: calc(50% - var(--gap) / 2); height: 64px; font-size: 15px; }
+    .kb { width: 92vw; }
+  }
+
+  /* ---------- Game chapters (original colour chapters) ---------- */
+  :root {
+    --paper: #f7f5ef; --ink: #22221f; --yellow: #eeff63; --lilac: #c9bfff; --pink: #ffc2df; --blue: #5342df; --orange: #f2a44b;
+    --font-display: 'Stack Sans Headline', 'Helvetica Neue', Arial, sans-serif;
+    --font-text: 'Stack Sans Text', 'Helvetica Neue', Arial, sans-serif;
+    --step-body: clamp(1rem, 0.95rem + 0.2vw, 1.0625rem);
+    --step-lead: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+    --step-chapter: clamp(2.25rem, 0.8rem + 4.8vw, 5.25rem);
+    --margin: clamp(1rem, 3vw, 2.75rem);
+    --gutter: clamp(1rem, 2vw, 2rem);
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  @font-face { font-family: 'Stack Sans Headline'; src: url(assets/fonts/stack-sans-headline-latin-wght-normal.woff2) format('woff2'); font-weight: 200 700; font-display: swap; }
+  @font-face { font-family: 'Stack Sans Text'; src: url(assets/fonts/stack-sans-text-latin-wght-normal.woff2) format('woff2'); font-weight: 200 700; font-display: swap; }
+  .games { font-family: var(--font-text); font-size: var(--step-body); line-height: 1.5; color: var(--ink); background: var(--paper); overflow-x: clip; }
+  :where(.games) :where(h2, p, figure, ol, ul) { margin: 0; }
+  .games ol, .games ul { padding: 0; list-style: none; }
+  .games button { font: inherit; color: inherit; background: none; border: 0; padding: 0; }
+  .games h2 { text-wrap: balance; }
+  .games-head { background: var(--paper); color: var(--ink); padding: clamp(4rem, 8vw, 7rem) var(--margin) clamp(2.5rem, 4vw, 3.5rem); }
+  .games-head h2 { font-family: var(--font-display); font-weight: 500; font-size: var(--step-chapter); line-height: 1; letter-spacing: -0.035em; }
+  .games-head p { margin-top: 1.25rem; font-size: var(--step-lead); }
+  .chapter h2 small { display: block; margin-bottom: 1rem; font-family: var(--font-text); font-size: .875rem; font-weight: 500; letter-spacing: .08em; opacity: .7; }
+  .games :focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+  .chapter .button { display: inline-flex; align-items: center; gap: .5em; min-height: 3.25rem; padding: .8em 1.6em; border-radius: 999px; background: var(--ink); color: var(--paper); font-weight: 500; text-decoration: none; transition: transform 180ms var(--ease-out); }
+  .chapter .button:hover { transform: translateY(-3px); }
+/* ---------- chapters ---------- */
+.chapter { position: relative; min-height: 660px; display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); align-items: center; padding: clamp(4rem, 7vw, 6.25rem) var(--margin); overflow: hidden; }
+.ch-ink { background: var(--ink); color: var(--paper); }
+.ch-yellow { background: var(--yellow); color: var(--ink); }
+.ch-blue { background: var(--blue); color: #fff; }
+.ch-pink { background: var(--pink); color: var(--ink); }
+.ch-lilac { background: var(--lilac); color: var(--ink); }
+.ch-orange { background: var(--orange); color: var(--ink); }
+.ch-ink .button { background: var(--yellow); color: var(--ink); }
+.ch-blue .button { background: #fff; color: var(--blue); }
+
+.chapter-copy { grid-column: 1 / span 6; position: relative; z-index: 2; }
+.chapter h2 { font-family: var(--font-display); font-weight: 500; font-size: var(--step-chapter); line-height: 1.0; letter-spacing: -0.035em; max-width: 9em; }
+.chapter .lead { margin-top: 1.75rem; font-size: var(--step-lead); line-height: 1.35; max-width: 22em; }
+.chapter .body { margin-top: 1rem; max-width: 28em; }
+.chapter .button { margin-top: 2.25rem; }
+.chapter-figure { grid-column: 7 / span 6; position: relative; display: flex; justify-content: center; align-items: center; }
+
+/* 67 calculator, working */
+.fig-calc { justify-content: center; padding: 1em .5em; }
+.calc { font-size: clamp(12px, 1.3vw, 19px); width: 16em; padding: 1em; border-radius: 1.6em; background: var(--yellow); color: var(--ink); rotate: -4deg; }
+.calc-top { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: .85em; padding: 0 .3em .8em; }
+.calc-solar { width: 5em; height: 1.2em; border-radius: .3em; background: var(--ink); opacity: .85; }
+.calc-screen { background: var(--ink); color: var(--yellow); border-radius: .9em; padding: .9em 1.1em; text-align: right; }
+.calc-expr { font-size: .9em; min-height: 1.5em; opacity: .75; white-space: nowrap; overflow: hidden; }
+.calc-out { display: block; font-family: var(--font-display); font-weight: 500; font-size: 2.6em; line-height: 1.05; letter-spacing: -0.03em; }
+.calc-out.pop { animation: pop 420ms var(--ease-out); }
+@keyframes pop { 0% { transform: scale(.82); opacity: .4; } 100% { transform: none; opacity: 1; } }
+.calc-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: .55em; margin-top: 1em; }
+.calc-keys button { height: 1.9em; border-radius: 999px; background: rgba(34,34,31,.1); font-weight: 600; font-size: 1.05em; transition: transform 120ms var(--ease-out), background-color 160ms; }
+.calc-keys button:hover { background: rgba(34,34,31,.18); }
+.calc-keys button:active, .calc-keys button.pressed { transform: scale(.92); }
+.calc-keys .op { background: rgba(34,34,31,.22); }
+.calc-keys .eq { background: var(--ink); color: var(--yellow); }
+.calc-keys button:focus-visible { outline-color: var(--ink); outline-offset: 2px; }
+
+/* Wordle board */
+.board { font-size: clamp(13px, 1.25vw, 19px); display: grid; gap: .5em; rotate: 3deg; margin-right: -2em; }
+.row { margin: 0; display: grid; grid-template-columns: repeat(5, 4.4em); gap: .5em; }
+.row b { display: grid; place-items: center; height: 4.4em; border-radius: .5em; background: rgba(34,34,31,.08); font-family: var(--font-display); font-weight: 600; font-size: 1em; }
+.row b:not(:empty) { font-size: 1.9em; height: 2.316em; }
+.row b.t-absent { background: rgba(34,34,31,.22); }
+.row b.t-present { background: var(--lilac); }
+.row b.t-correct { background: var(--ink); color: var(--yellow); }
+.row b.t-typed { background: #fff; }
+.row-typing b:nth-child(3) { outline: 3px solid var(--ink); outline-offset: -3px; animation: blink 1.1s steps(2) infinite; }
+@keyframes blink { 50% { outline-color: transparent; } }
+
+/* Excuse slip */
+.slip { font-size: clamp(12px, 1.3vw, 19px); width: 26em; background: var(--paper); color: var(--ink); border-radius: 1.2em; padding: 1.6em 1.8em 1.4em; rotate: -3deg; margin-right: -3em; }
+.slip-head { font-weight: 500; opacity: .7; }
+.slip-text { margin-top: .7em; font-family: var(--font-display); font-weight: 500; font-size: 2.3em; line-height: 1.08; letter-spacing: -0.025em; min-height: 3.24em; transition: opacity 180ms; }
+.slip-text.is-swapping { opacity: 0; }
+.slip-foot { margin-top: 1.4em; display: flex; justify-content: space-between; align-items: center; gap: 1em; }
+.slip-btn { border-radius: 999px; background: var(--blue); color: #fff; padding: .6em 1.2em; font-weight: 500; transition: transform 160ms var(--ease-out); }
+.slip-btn:hover { transform: translateY(-2px); }
+.slip-btn:active { transform: scale(.96); }
+.slip-btn:focus-visible { outline-color: var(--blue); }
+
+/* Fortune cookie, from the game's own artwork */
+.cookie { font-size: clamp(12px, 1.3vw, 19px); width: 30em; position: relative; }
+.cookie svg { width: 100%; height: auto; overflow: visible; }
+.cookie .half-l { transform-origin: 220px 150px; rotate: -7deg; translate: -14px 0; }
+.cookie .half-r { transform-origin: 220px 150px; rotate: 7deg; translate: 14px 0; }
+.fortune-slip { position: absolute; left: 50%; top: 52%; width: 21em; translate: -50% 0; rotate: -2deg; background: #fff; padding: .9em 1.2em; border-radius: .3em; font-weight: 500; font-size: 1.1em; line-height: 1.35; text-align: center; }
+
+/* Ask cards: Horoscope and Sorting Hat */
+.ask { font-size: clamp(12px, 1.3vw, 19px); width: 25em; border-radius: 1.4em; padding: 1.8em; background: #34342f; color: var(--paper); rotate: 2.5deg; margin-right: -2em; }
+.ask-count { opacity: .7; font-weight: 500; }
+.ask-q { margin-top: .6em; font-family: var(--font-display); font-weight: 500; font-size: 2.4em; line-height: 1.06; letter-spacing: -0.025em; }
+.ask-answers { margin-top: 1.4em; display: grid; grid-template-columns: 1fr 1fr; gap: .7em; }
+.ask-btn { display: grid; place-items: center; height: 3.2em; border-radius: 999px; background: rgba(247,245,239,.1); font-weight: 600; }
+.ask-btn.is-on { background: var(--yellow); color: var(--ink); }
+.ask-note { margin-top: 1.2em; font-weight: 500; }
+.ask-paper { background: var(--paper); color: var(--ink); rotate: -2.5deg; }
+.ask-paper .ask-btn { background: rgba(83,66,223,.12); }
+
+/* IQ quiz */
+.quiz { font-size: clamp(12px, 1.3vw, 19px); width: 24em; border-radius: 1.4em; padding: 1.4em; background: var(--paper); rotate: 3deg; margin-right: -2em; }
+.quiz-meta { display: flex; justify-content: space-between; gap: 1em; font-weight: 500; opacity: .75; }
+.quiz-bar { margin-top: .8em; height: .5em; border-radius: 999px; background: rgba(34,34,31,.12); overflow: hidden; }
+.quiz-bar i { display: block; width: 90%; height: 100%; background: var(--ink); border-radius: inherit; }
+.quiz-q { margin-top: .8em; font-family: var(--font-display); font-weight: 500; font-size: 1.6em; line-height: 1.08; letter-spacing: -0.025em; }
+.quiz-a { margin-top: 1.1em; display: grid; gap: .55em; }
+.quiz-a li { display: flex; align-items: center; gap: .8em; min-height: 2.5em; padding: 0 .55em; border-radius: 999px; background: rgba(34,34,31,.07); font-weight: 500; }
+.quiz-a li span { display: grid; place-items: center; width: 2em; height: 2em; border-radius: 50%; background: rgba(34,34,31,.12); font-weight: 600; flex: none; }
+.quiz-a li.is-on { background: var(--ink); color: var(--paper); }
+.quiz-a li.is-on span { background: var(--lilac); color: var(--ink); }
+
+/* Rock paper scissors scoreboard */
+.score { font-size: clamp(12px, 1.3vw, 19px); width: 26em; display: grid; grid-template-columns: 1fr 1fr; gap: .6em; rotate: -3deg; margin-right: -2em; }
+.score-col { background: var(--ink); color: var(--paper); border-radius: 1.2em; padding: 1.2em 1.4em 1em; display: flex; flex-direction: column; }
+.score-col:first-child { background: var(--paper); color: var(--ink); }
+.score-who { font-weight: 500; opacity: .8; }
+.score-n { font-family: var(--font-display); font-weight: 500; font-size: 6.5em; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.score-foot { grid-column: 1 / -1; background: var(--paper); border-radius: 999px; padding: .9em 1.4em; font-weight: 600; }
+
+
+.cookie .half-l, .cookie .half-r { transition: rotate 600ms var(--ease-out), translate 600ms var(--ease-out); }
+.cookie:hover .half-l { rotate: -12deg; translate: -26px 0; }
+.cookie:hover .half-r { rotate: 12deg; translate: 26px 0; }
+.chapter-figure > [data-ui] { transition: rotate 500ms var(--ease-out); }
+.chapter-figure:hover > [data-ui] { rotate: 0deg; }
+@media (max-width: 960px) {
+  .chapter { align-content: center; row-gap: 3.5rem; min-height: auto; }
+  .chapter-copy, .chapter-figure { grid-column: 1 / -1; }
+  .chapter-figure { justify-content: flex-end; }
+}
+@media (max-width: 640px) {
+  .chapter { padding-block: 4.5rem; row-gap: 2.75rem; }
+  .chapter h2 { font-size: clamp(2.5rem, 11vw, 3.5rem); }
+  .chapter .lead { margin-top: 1.25rem; }
+  .chapter-figure { justify-content: flex-start; }
+  .calc, .board, .slip, .cookie, .ask, .quiz, .score { font-size: clamp(12px, 3.6vw, 16px); }
+}
+.is-static { pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .rot { transition-duration: 0.01s; }
+  }
+
+  /* =====================================================================
+     Squarespace-inspired finish: warm charcoal-to-greige light, soft glass,
+     serif eyebrow, light headlines, square white buttons. Overrides above.
+     ===================================================================== */
+  :root {
+    --sq-ink: #1a1d1e; --sq-deep: #101213; --sq-cream: #ece9e1; --sq-sage: #8c9a8d;
+    --sq-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --sq-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  body, .stage, .desk { background: var(--sq-deep); }
+  .stage { background: radial-gradient(80% 60% at 50% 0%, #23282a 0%, #101213 70%); }
+  .monitor { background: linear-gradient(180deg, #0c0d0e, #060707); box-shadow: inset 0 0 0 1px rgba(255,255,255,.07), inset 0 1px 0 rgba(255,255,255,.12), 0 40px 90px rgba(0,0,0,.6), 0 0 120px rgba(150,140,120,.07); }
+  .neck { background: linear-gradient(90deg, #121415, #3b3f40 50%, #121415); }
+  .foot { background: linear-gradient(#4d5153, #1c1f20); box-shadow: 0 10px 24px rgba(0,0,0,.55); }
+
+  /* the screen */
+  .hero {
+    background:
+      radial-gradient(38% 52% at 70% 46%, rgba(244,232,208,.34), rgba(244,232,208,0) 72%),
+      radial-gradient(60% 70% at 100% 100%, rgba(190,178,156,.55), rgba(190,178,156,0) 70%),
+      radial-gradient(70% 80% at 0% 0%, rgba(8,10,10,.75), rgba(8,10,10,0) 65%),
+      linear-gradient(135deg, #1d2122 0%, #34383a 38%, #6c675d 72%, #a39b8c 100%);
+    box-shadow: inset 0 0 120px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.05);
+  }
+  .hero::before { content: ""; position: absolute; inset: 0; background-image: var(--sq-grain); opacity: .07; mix-blend-mode: overlay; pointer-events: none; }
+  .hero > * { position: relative; }
+  .hero > .brand { position: absolute; }
+  .hero > .taskbar { position: absolute; }
+  .hero > .float-card { position: absolute; }
+  .brand-name { text-transform: uppercase; letter-spacing: .18em; font-weight: 500; font-size: 13px; }
+  .eyebrow { margin: 0 0 clamp(8px, 1.4vh, 16px); font-family: var(--sq-serif); font-style: italic; font-size: clamp(18px, 1.7vw, 26px); color: rgba(255,255,255,.82); letter-spacing: .005em; }
+  .copy h1 { font-weight: 400; letter-spacing: -0.05em; line-height: .96; text-shadow: 0 2px 40px rgba(0,0,0,.25); }
+  .lede { color: rgba(255,255,255,.82); }
+  .btn { border-radius: 3px; height: 54px; padding: 0 30px; text-transform: uppercase; letter-spacing: .09em; font-size: 14px; font-weight: 600; }
+  .btn-primary { background: #fff; color: var(--sq-ink); box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+  .btn-primary:hover { background: var(--sq-cream); }
+  .btn-ghost { background: rgba(20,22,22,.35); border-color: rgba(255,255,255,.22); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .btn-ghost:hover { background: rgba(20,22,22,.55); }
+  .result { background: rgba(20,22,22,.45); border-color: rgba(255,255,255,.2); border-radius: 12px; }
+  .result a { border-radius: 3px; background: #fff; color: var(--sq-ink); text-transform: uppercase; letter-spacing: .08em; font-size: 12px; }
+
+  /* floating glass swatch card, like the palette card in the reference */
+  .float-card { top: clamp(18px, 3.4vh, 36px); left: 33%; display: flex; width: clamp(190px, 17vw, 270px); height: clamp(44px, 5.4vh, 62px); padding: 8px; gap: 0; border-radius: 6px; background: linear-gradient(135deg, rgba(255,255,255,.2), rgba(255,255,255,.06)); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 18px 40px rgba(0,0,0,.28); }
+  .float-card i { flex: 1; display: block; }
+  .float-card i:first-child { border-radius: 3px 0 0 3px; } .float-card i:last-child { border-radius: 0 3px 3px 0; }
+
+  /* the wheel in the same tones */
+  .wheel { filter: drop-shadow(0 40px 50px rgba(0,0,0,.38)) drop-shadow(0 0 40px rgba(240,226,196,.16)); }
+  .glass { fill: rgba(16,18,18,.38); stroke: rgba(255,255,255,.4); }
+  .rot .seg .slice { stroke: rgba(255,255,255,.34); }
+  .rot .seg:nth-child(3n+1) .slice { fill: rgba(236,233,225,.9); }
+  .rot .seg:nth-child(3n+2) .slice { fill: rgba(90,106,96,.82); }
+  .rot .seg:nth-child(3n+3) .slice { fill: rgba(30,40,43,.84); }
+  .rot .seg:nth-child(3n+1) .lbl { fill: #1a1d1e; }
+  .rot .seg.win .slice { fill: #ffffff; }
+  .rot .seg.win .lbl { fill: #1a1d1e; }
+  .hub-face { fill: #1a1d1e; stroke: rgba(255,255,255,.85); }
+  .hub:hover .hub-face { fill: #2a2f31; }
+
+  /* floating pill dock instead of a taskbar */
+  .taskbar { background: none; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; height: auto; bottom: clamp(14px, 2.6vh, 28px); }
+  .dock { display: flex; gap: 4px; padding: 6px; border-radius: 999px; background: rgba(22,24,24,.78); border: 1px solid rgba(255,255,255,.1); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+  .dock a { padding: 11px 22px; border-radius: 999px; color: rgba(255,255,255,.88); font-size: 15px; font-weight: 500; text-decoration: none; transition: background-color .15s; }
+  .dock a:hover { background: rgba(255,255,255,.12); }
+  .clock { position: absolute; right: clamp(16px, 2vw, 28px); top: auto; bottom: 4px; }
+
+  /* the keyboard room */
+  .desk { background: radial-gradient(70% 55% at 50% 0%, #25292a 0%, #101213 72%); }
+  .kb { background: linear-gradient(180deg, #1b1e1f, #0d0f10); border-color: rgba(255,255,255,.1); box-shadow: 0 50px 90px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.1); }
+  .k { background: linear-gradient(#2a2e2f, #222627); border-color: #363b3c; color: #a2a8a5; box-shadow: 0 3px 0 #060707; }
+  button.k:hover { background: #33383a; }
+  .k.g { background: linear-gradient(#f3f1ea, #e2dfd6); border-color: #fff; color: #1a1d1e; }
+  .k.g .n { color: #7b7d76; }
+  .k.g:hover { background: #fff; }
+  .desk-head h2, .games-head h2 { font-weight: 400; letter-spacing: -0.045em; }
+  .desk-head h2 { font-size: clamp(38px, 5vw, 76px); }
+
+  /* the games: tinted, shaded cards on charcoal */
+  .games { background: #101213; color: #fff; }
+  .games-head { background: radial-gradient(70% 100% at 50% 0%, #1d2122, #101213); color: #fff; text-align: center; padding-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+  .games-head h2 { font-family: var(--font); font-size: clamp(2.6rem, 6vw, 6rem); }
+  .games-head p { font-family: var(--sq-serif); font-style: italic; color: rgba(255,255,255,.7); }
+  .chapter {
+    --tint-a: #2b2f30; --tint-b: #494a45; --glow: rgba(255,255,255,.14);
+    max-width: 1280px; margin: clamp(14px, 2vw, 24px) auto; width: calc(100% - 2 * var(--margin));
+    min-height: 560px; border-radius: 16px; color: #fff;
+    background:
+      radial-gradient(60% 80% at 88% 8%, var(--glow), rgba(255,255,255,0) 65%),
+      linear-gradient(145deg, var(--tint-a), var(--tint-b));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 30px 60px rgba(0,0,0,.4);
+    padding-inline: clamp(1.5rem, 5vw, 5rem);
+  }
+  .chapter::before { content: ""; position: absolute; inset: 0; background-image: var(--sq-grain); opacity: .06; mix-blend-mode: overlay; pointer-events: none; }
+  .ch-ink { --tint-a: #202324; --tint-b: #4a4b46; --glow: rgba(236,226,206,.2); }
+  .ch-yellow { --tint-a: #2a2c22; --tint-b: #6d6f3f; --glow: rgba(238,255,99,.2); }
+  .ch-blue { --tint-a: #23244a; --tint-b: #4d4e86; --glow: rgba(140,130,255,.28); }
+  .ch-pink { --tint-a: #342830; --tint-b: #84636f; --glow: rgba(255,194,223,.26); }
+  .ch-lilac { --tint-a: #2c2a3a; --tint-b: #6b6784; --glow: rgba(201,191,255,.24); }
+  .ch-orange { --tint-a: #2f261e; --tint-b: #86613a; --glow: rgba(242,164,75,.26); }
+  .chapter h2 { font-weight: 400; letter-spacing: -0.045em; font-size: clamp(2.4rem, 4.8vw, 4.6rem); }
+  .chapter h2 small { font-family: var(--sq-serif); font-style: italic; font-size: 1.05rem; letter-spacing: 0; opacity: .8; }
+  .chapter .lead { color: rgba(255,255,255,.94); }
+  .chapter .body { color: rgba(255,255,255,.74); }
+  .chapter .button, .ch-ink .button, .ch-blue .button { border-radius: 3px; background: #fff; color: #1a1d1e; text-transform: uppercase; letter-spacing: .09em; font-size: .85rem; font-weight: 600; }
+
+  /* figures: cream interface cards with soft depth */
+  .chapter-figure > [data-ui] { rotate: 0deg; margin-right: 0; box-shadow: 0 40px 70px rgba(0,0,0,.4), 0 2px 0 rgba(255,255,255,.25) inset; }
+  .calc { background: var(--sq-cream); color: #1a1d1e; }
+  .calc-solar { background: #1a1d1e; opacity: .8; }
+  .calc-screen { background: #1a1d1e; color: var(--sq-cream); }
+  .calc-keys button { background: rgba(26,29,30,.09); }
+  .calc-keys .op { background: rgba(26,29,30,.2); }
+  .calc-keys .eq { background: #1a1d1e; color: #fff; }
+  .board { padding: 1.3em; border-radius: 1.2em; background: rgba(12,14,14,.35); border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .row b { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: #fff; }
+  .row b.t-absent { background: rgba(0,0,0,.4); color: rgba(255,255,255,.65); border-color: transparent; }
+  .row b.t-present { background: var(--sq-sage); color: #101213; border-color: transparent; }
+  .row b.t-correct { background: var(--sq-cream); color: #1a1d1e; border-color: transparent; }
+  .row b.t-typed { background: rgba(255,255,255,.22); }
+  .row-typing b:nth-child(3) { outline-color: #fff; }
+  .slip, .quiz, .ask-paper { background: var(--sq-cream); color: #1a1d1e; }
+  .slip-btn { background: #1a1d1e; color: #fff; }
+  .quiz-bar { background: rgba(26,29,30,.14); } .quiz-bar i { background: #1a1d1e; }
+  .quiz-a li { background: rgba(26,29,30,.07); } .quiz-a li span { background: rgba(26,29,30,.12); }
+  .quiz-a li.is-on { background: #1a1d1e; color: #fff; } .quiz-a li.is-on span { background: var(--sq-sage); color: #101213; }
+  .ask { background: rgba(14,16,16,.5); border: 1px solid rgba(255,255,255,.16); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: #fff; }
+  .ask-paper { background: var(--sq-cream); border-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; color: #1a1d1e; }
+  .ask-btn { background: rgba(255,255,255,.12); }
+  .ask-btn.is-on { background: #fff; color: #1a1d1e; }
+  .ask-paper .ask-btn { background: rgba(26,29,30,.1); }
+  .score { rotate: 0deg; margin-right: 0; }
+  .score-col { background: rgba(14,16,16,.55); border: 1px solid rgba(255,255,255,.14); color: #fff; }
+  .score-col:first-child { background: var(--sq-cream); color: #1a1d1e; }
+  .score-foot { background: rgba(14,16,16,.45); border: 1px solid rgba(255,255,255,.14); color: #fff; }
+  .fortune-slip { background: var(--sq-cream); color: #1a1d1e; }
+  .chapter-figure > .cookie { box-shadow: none; background: none; border: 0; }
+  .games .chapter-copy .lead { margin-top: 1.25rem; } .games .chapter-copy .body { margin-top: .9rem; }
+
+  @media (max-width: 1100px) { .float-card { display: none; } }
+  @media (max-width: 900px) { .dock a { padding: 10px 14px; font-size: 14px; } .clock { display: none; } }
+  @media (max-width: 640px) { .chapter { width: calc(100% - 20px); border-radius: 12px; } .btn { padding: 0 22px; } }
+
+  /* ---- v3: two cards per row, keys in game colours ---- */
+  .games { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 26px); max-width: 1440px; margin: 0 auto; padding: 0 clamp(14px, 2.4vw, 36px) clamp(48px, 6vw, 96px); align-items: stretch; }
+  .games-head { grid-column: 1 / -1; margin: 0 calc(-1 * clamp(14px, 2.4vw, 36px)); }
+  .games .chapter { display: flex; flex-direction: column; align-items: stretch; gap: clamp(1.5rem, 2.4vw, 2.5rem); width: auto; max-width: none; margin: 0; min-height: 0; padding: clamp(1.6rem, 3vw, 3rem); scroll-margin-top: 20px; transition: box-shadow .4s ease; }
+  .games .chapter:target { box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 30px 60px rgba(0,0,0,.4), 0 0 0 2px rgba(255,255,255,.6); }
+  .games .chapter-copy { grid-column: auto; }
+  .games .chapter h2 { font-size: clamp(2rem, 3.4vw, 3.4rem); max-width: none; }
+  .games .chapter .lead { font-size: clamp(1.05rem, 1.35vw, 1.3rem); }
+  .games .chapter .button { margin-top: 1.5rem; }
+  .games .chapter-figure { grid-column: auto; margin-top: auto; justify-content: center; min-height: 0; }
+  .games .chapter-figure > [data-ui] { font-size: clamp(10.5px, 1.02vw, 15px); }
+  .games .chapter-figure > .cookie { font-size: clamp(10.5px, 1.02vw, 15px); }
+  .games .chapter:last-child { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; }
+  .games .chapter:last-child .chapter-copy { flex: 1 1 50%; }
+  .games .chapter:last-child .chapter-figure { flex: 1 1 50%; margin-top: 0; }
+  .games .chapter:last-child .chapter-figure > [data-ui] { font-size: clamp(12px, 1.3vw, 19px); }
+
+  .k.g { background: linear-gradient(180deg, color-mix(in srgb, var(--kc, #ece9e1) 88%, #fff), var(--kc, #ece9e1)); border-color: color-mix(in srgb, var(--kc, #ece9e1) 70%, #fff); color: var(--kt, #1a1d1e); box-shadow: 0 3px 0 color-mix(in srgb, var(--kc, #ece9e1) 45%, #000), 0 6px 14px rgba(0,0,0,.35); }
+  .k.g .n { color: inherit; opacity: .6; }
+  .k.g:hover { background: color-mix(in srgb, var(--kc, #ece9e1) 90%, #fff); box-shadow: 0 5px 0 color-mix(in srgb, var(--kc, #ece9e1) 45%, #000), 0 10px 20px rgba(0,0,0,.4); }
+  .k.g:active { box-shadow: 0 1px 0 color-mix(in srgb, var(--kc, #ece9e1) 45%, #000); }
+
+  @media (max-width: 860px) {
+    .games { grid-template-columns: 1fr; }
+    .games .chapter:last-child { flex-direction: column; align-items: stretch; }
+    .games .chapter-figure > [data-ui], .games .chapter-figure > .cookie { font-size: clamp(12px, 3.6vw, 16px); }
+    .games .chapter:last-child .chapter-figure > [data-ui] { font-size: clamp(12px, 3.6vw, 16px); }
+  }
+</style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -26,44 +552,154 @@
 </head>
 <body>
 
-<a class="skip" href="#games">Skip to the games</a>
+<main id="main">
+  <!-- ============ THE MONITOR ============ -->
+  <div class="stage">
+  <div class="monitor" id="monitor">
+  <section class="hero" id="screen" aria-label="Home screen">
 
-<header class="bar" id="top">
-  <span class="wordmark"><span class="mark" aria-hidden="true">:)</span><span translate="no">Dumb Little Internet</span></span>
-  <nav aria-label="Main"><a href="#games">The games</a><a href="#about">About</a></nav>
-</header>
-
-<main>
-
-<section class="hero" aria-labelledby="hero-title">
-  <div class="hero-copy">
-    <h1 id="hero-title"><span class="line"><span data-line style="--i:0">Small websites.</span></span> <span class="line"><span data-line style="--i:1">Serious purposes.</span></span></h1>
-    <p class="hero-sentence" data-load style="--d:420ms">The Dumb Little Internet is 8 tiny browser games, and every one of them is rigged. Come waste a perfectly good minute.</p>
-    <div class="hero-actions" data-load style="--d:540ms">
-      <a class="button" id="pick" href="#games">Pick a game for me</a>
-      <button class="text-button" id="spin-again" type="button" hidden>Spin again</button>
+    <div class="brand">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="#eeff63" stroke="#22221f" stroke-width="4"/><circle cx="36" cy="42" r="5" fill="#22221f"/><circle cx="64" cy="42" r="5" fill="#22221f"/><path d="M30 60 Q50 80 70 60" fill="none" stroke="#22221f" stroke-width="5" stroke-linecap="round"/></svg>
+      <span class="brand-name">Dumb Little Internet</span>
     </div>
-    <p class="pick-status" id="pick-status" role="status" aria-live="polite"></p>
-  </div>
-  <div class="face-wrap" aria-hidden="true">
-    <div class="face" id="face">
-      <svg class="face-smile" id="face-smile" viewBox="0 0 120 60"><rect x="28" y="4" width="13" height="13" fill="#22221f"/><rect x="79" y="4" width="13" height="13" fill="#22221f"/><path d="M8 30 Q60 72 112 30 L112 38 Q60 86 8 38 Z" fill="#22221f"/></svg>
-      <span class="face-reel" id="face-reel"></span>
+
+    <div class="float-card" aria-hidden="true"><i style="background:#e9e8e3"></i><i style="background:#a8ada3"></i><i style="background:#5a6a60"></i><i style="background:#2d3d42"></i><i style="background:#1c2629"></i></div>
+
+    <div class="copy">
+      <p class="eyebrow">Eleven tiny games</p>
+      <h1>Time to kill?<br>Play a game!</h1>
+      <p class="lede">Spin the wheel and let the internet decide, or pick your own.</p>
+      <div class="actions">
+        <button class="btn btn-primary" id="spin-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+          Spin
+        </button>
+        <a class="btn btn-ghost" id="all-games" href="#keyboard">All games</a>
+      </div>
+      <div class="result-slot"><div class="result" id="result" role="status" aria-live="polite" hidden></div></div>
     </div>
+
+    <div class="wheel-wrap">
+      <svg class="wheel" id="wheel" viewBox="0 0 620 720" role="img" aria-label="A wheel with eleven games. Press Spin to pick one.">
+        <defs>
+          <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+            <stop offset="0.42" stop-color="#fff" stop-opacity="0.22"/>
+            <stop offset="0.58" stop-color="#cdd6df" stop-opacity="0.08"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+          </linearGradient>
+          <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+            <rect width="4" height="1" fill="#fff" fill-opacity="0.05"/>
+          </pattern>
+        </defs>
+
+        <!-- stand -->
+        <polygon class="glass" points="254,598 366,598 388,692 232,692"/>
+        <rect class="glass" x="184" y="686" width="252" height="26" rx="13"/>
+
+        <!-- rim -->
+        <circle class="glass" cx="310" cy="330" r="290"/>
+
+        <!-- spinning part: slices + names (built by script) -->
+        <g class="rot" id="rot"></g>
+
+        <!-- hologram overlays (stay still while the wheel turns) -->
+        <circle cx="310" cy="330" r="278" fill="url(#sheen)" pointer-events="none"/>
+        <circle cx="310" cy="330" r="290" fill="url(#scan)" pointer-events="none"/>
+
+        <!-- pointer -->
+        <polygon points="284,8 336,8 310,58" fill="#ffffff" stroke="rgba(255,255,255,0.6)" stroke-width="4" stroke-linejoin="round"/>
+
+        <!-- hub / spin button -->
+        <g class="hub" id="hub" role="button" tabindex="0" aria-label="Spin the wheel">
+          <circle class="hub-face" cx="310" cy="330" r="66"/>
+          <text class="hub-text" x="310" y="331" text-anchor="middle" dominant-baseline="central">SPIN</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="taskbar">
+      <nav class="dock" aria-label="Sections"><a href="#screen">Home</a><a href="#keyboard">Options</a><a href="#games">Games</a></nav>
+      <div class="clock" aria-hidden="true"><span id="clock-time"></span><span id="clock-date"></span></div>
+    </div>
+  </section>
+  <div class="chin" aria-hidden="true"><span class="led"></span><span class="plug plug-top" id="plug-top"></span></div>
   </div>
-</section>
+  <div class="stand" aria-hidden="true"><span class="neck"></span><span class="foot"></span></div>
+  </div>
 
-<div id="games">
+  <!-- ============ THE KEYBOARD ============ -->
+  <section class="desk" id="keyboard" aria-labelledby="desk-title">
+    <div class="desk-head">
+      <h2 id="desk-title">All games</h2>
+      <p>Press a key to play.</p>
+    </div>
 
+    <div class="kb" role="group" aria-label="Keyboard of games">
+      <span class="plug plug-kb" id="plug-kb" aria-hidden="true"></span>
+
+      <div class="kb-row">
+        <button class="k fn" id="esc" type="button" style="--n:1" aria-label="Escape key" tabindex="-1">Esc</button>
+        <span class="k fn" aria-hidden="true">F1</span><span class="k fn" aria-hidden="true">F2</span><span class="k fn" aria-hidden="true">F3</span><span class="k fn" aria-hidden="true">F4</span>
+        <span class="k fn" aria-hidden="true">F5</span><span class="k fn" aria-hidden="true">F6</span><span class="k fn" aria-hidden="true">F7</span><span class="k fn" aria-hidden="true">F8</span>
+        <span class="k fn" aria-hidden="true">F9</span><span class="k fn" aria-hidden="true">F10</span><span class="k fn" aria-hidden="true">F11</span><span class="k fn" aria-hidden="true">F12</span>
+        <span class="k fn" aria-hidden="true" style="--n:2">Del</span>
+      </div>
+
+      <div class="kb-row">
+        <span class="k" aria-hidden="true">`</span><span class="k" aria-hidden="true">1</span><span class="k" aria-hidden="true">2</span><span class="k" aria-hidden="true">3</span><span class="k" aria-hidden="true">4</span><span class="k" aria-hidden="true">5</span><span class="k" aria-hidden="true">6</span><span class="k" aria-hidden="true">7</span><span class="k" aria-hidden="true">8</span><span class="k" aria-hidden="true">9</span><span class="k" aria-hidden="true">0</span><span class="k" aria-hidden="true">-</span><span class="k" aria-hidden="true">=</span>
+        <span class="k" aria-hidden="true" style="--n:2">Backspace</span>
+      </div>
+
+      <div class="kb-row">
+        <span class="k" aria-hidden="true" style="--n:1.5">Tab</span>
+        <a class="k g" style="--n:2;--kc:#ece9e1;--kt:#1a1d1e" href="#calculator"><span class="n">01</span><span class="t">67 Calculator</span></a>
+        <a class="k g" style="--n:2;--kc:#5342df;--kt:#ffffff" href="#excuses"><span class="n">02</span><span class="t">Excuse Generator</span></a>
+        <a class="k g" style="--n:2;--kc:#f2a44b;--kt:#1a1d1e" href="#rock-paper-scissors"><span class="n">03</span><span class="t">Rock Paper Scissors</span></a>
+        <a class="k g" style="--n:2;--kc:#eeff63;--kt:#1a1d1e" href="#wordle"><span class="n">04</span><span class="t">Wordle for Dummies</span></a>
+        <a class="k g" style="--n:2;--kc:#ffc2df;--kt:#1a1d1e" href="#fortune"><span class="n">05</span><span class="t">Fortune Cookie</span></a>
+        <a class="k g" style="--n:2;--kc:#c9bfff;--kt:#1a1d1e" href="#iq"><span class="n">06</span><span class="t">IQ Test</span></a>
+        <span class="k" aria-hidden="true" style="--n:1.5">\</span>
+      </div>
+
+      <div class="kb-row">
+        <span class="k" aria-hidden="true" style="--n:1.75">Caps</span>
+        <a class="k g" style="--n:2;--kc:#ece9e1;--kt:#1a1d1e" href="#horoscope"><span class="n">07</span><span class="t">Horoscope</span></a>
+        <a class="k g" style="--n:2;--kc:#5342df;--kt:#ffffff" href="#sorting-hat"><span class="n">08</span><span class="t">Sorting Hat</span></a>
+        <a class="k g" style="--n:2;--kc:#ece9e1;--kt:#1a1d1e" href="#to-do-tabloid"><span class="n">09</span><span class="t">To-Do Tabloid</span></a>
+        <a class="k g" style="--n:2;--kc:#eeff63;--kt:#1a1d1e" href="#dog-time-converter"><span class="n">10</span><span class="t">Dog Time Converter</span></a>
+        <a class="k g" style="--n:2;--kc:#c9bfff;--kt:#1a1d1e" href="#laundry-label-decoder"><span class="n">11</span><span class="t">Laundry Label Decoder</span></a>
+        <span class="k" aria-hidden="true" style="--n:3.25">Enter</span>
+      </div>
+
+      <div class="kb-row">
+        <span class="k" aria-hidden="true" style="--n:2.25">Shift</span>
+        <span class="k" aria-hidden="true">Z</span><span class="k" aria-hidden="true">X</span><span class="k" aria-hidden="true">C</span><span class="k" aria-hidden="true">V</span><span class="k" aria-hidden="true">B</span><span class="k" aria-hidden="true">N</span><span class="k" aria-hidden="true">M</span><span class="k" aria-hidden="true">,</span><span class="k" aria-hidden="true">.</span><span class="k" aria-hidden="true">/</span>
+        <span class="k" aria-hidden="true" style="--n:2.75">Shift</span>
+      </div>
+
+      <div class="kb-row">
+        <span class="k" aria-hidden="true" style="--n:1.5">Ctrl</span><span class="k" aria-hidden="true" style="--n:1.5">Win</span><span class="k" aria-hidden="true" style="--n:1.5">Alt</span>
+        <span class="k" aria-hidden="true" style="--n:6"></span>
+        <span class="k" aria-hidden="true" style="--n:1.5">Alt</span><span class="k" aria-hidden="true" style="--n:1.5">Win</span><span class="k" aria-hidden="true" style="--n:1.5">Ctrl</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- coiled cable from the monitor to the keyboard (drawn by script) -->
+
+  <!-- ============ THE GAMES ============ -->
+  <div class="games" id="games">
+    <div class="games-head"><h2>The games</h2><p>Eleven tiny games. All good fun.</p></div>
 <!-- 67 CALCULATOR -->
 <section class="chapter ch-ink" id="calculator" aria-labelledby="t-calc">
   <div class="chapter-copy">
-    <h2 id="t-calc" data-reveal>67 Calculator</h2>
-    <p class="lead" data-reveal>All roads lead to 67. Unless the math actually does.</p>
-    <p class="body" data-reveal>A fully working calculator with exactly one answer. Go on, try some sums on this one.</p>
-    <a class="button" data-reveal href="67-calculator/index.html" target="_blank" rel="noopener">Open the calculator</a>
+    <h2 id="t-calc"><small>01</small>67 Calculator</h2>
+    <p class="lead">All roads lead to 67. Unless the math actually does.</p>
+    <p class="body">A fully working calculator with exactly one answer. Go on, try some sums on this one.</p>
+    <a class="button" href="67-calculator/index.html" target="_blank" rel="noopener">Open the calculator</a>
   </div>
-  <figure class="chapter-figure shutter fig-calc">
+  <figure class="chapter-figure fig-calc">
     <div class="calc is-static" data-ui aria-hidden="true" inert>
       <div class="calc-top"><span>TI-67+</span><span class="calc-solar"></span></div>
       <div class="calc-screen">
@@ -80,15 +716,49 @@
   </figure>
 </section>
 
+<!-- EXCUSE GENERATOR -->
+<section class="chapter ch-blue" id="excuses" aria-labelledby="t-excuse">
+  <div class="chapter-copy">
+    <h2 id="t-excuse"><small>02</small>Excuse Generator</h2>
+    <p class="lead">A perfectly good excuse. Believability sold separately.</p>
+    <p class="body">Pick your situation and the Department of Plausible Explanations handles the rest.</p>
+    <a class="button" href="excuse-generator/index.html" target="_blank" rel="noopener">Get an excuse</a>
+  </div>
+  <figure class="chapter-figure fig-excuse">
+    <div class="slip is-static" data-ui aria-hidden="true" inert>
+      <p class="slip-head">Your official explanation</p>
+      <p class="slip-text" id="excuse-text">I had to walk my fish.</p>
+      <div class="slip-foot"><span id="excuse-cat">Being late</span><span class="slip-btn">Another one</span></div>
+    </div>
+  </figure>
+</section>
+
+<!-- ROCK PAPER SCISSORS -->
+<section class="chapter ch-orange" id="rock-paper-scissors" aria-labelledby="t-rps">
+  <div class="chapter-copy">
+    <h2 id="t-rps"><small>03</small>Rock Paper Scissors</h2>
+    <p class="lead">Three choices. One finger gun. Skill issue.</p>
+    <p class="body">The classic, more or less. Pick your move and trust your instincts. Probably.</p>
+    <a class="button" href="rock-paper-scissors/index.html" target="_blank" rel="noopener">Make my move</a>
+  </div>
+  <figure class="chapter-figure fig-rps">
+    <div class="score" data-ui role="img" aria-label="Scoreboard: you 0, opponent 12, after 12 rounds">
+      <div class="score-col"><span class="score-who">You</span><span class="score-n">0</span></div>
+      <div class="score-col"><span class="score-who">Opponent</span><span class="score-n">12</span></div>
+      <p class="score-foot">Round 13. Your move.</p>
+    </div>
+  </figure>
+</section>
+
 <!-- WORDLE FOR DUMMIES -->
 <section class="chapter ch-yellow" id="wordle" aria-labelledby="t-wordle">
   <div class="chapter-copy">
-    <h2 id="t-wordle" data-reveal>Wordle for Dummies</h2>
-    <p class="lead" data-reveal>Five letters. Six chances. Surely you’ve got this.</p>
-    <p class="body" data-reveal>The real rules and a real list of 14,855 words. It should be easy. It is not.</p>
-    <a class="button" data-reveal href="wordle-for-dummies/index.html" target="_blank" rel="noopener">Play Wordle for Dummies</a>
+    <h2 id="t-wordle"><small>04</small>Wordle for Dummies</h2>
+    <p class="lead">Five letters. Six chances. Surely you’ve got this.</p>
+    <p class="body">The real rules and a real list of 14,855 words. It should be easy. It is not.</p>
+    <a class="button" href="wordle-for-dummies/index.html" target="_blank" rel="noopener">Play Wordle for Dummies</a>
   </div>
-  <figure class="chapter-figure fig-wordle" data-reveal>
+  <figure class="chapter-figure fig-wordle">
     <div class="board" data-ui role="img" aria-label="A game in progress: CRANE scored no letters, HUMID scored U and M in the right spot and D in the wrong spot.">
       <p class="row"><b class="t-absent">C</b><b class="t-absent">R</b><b class="t-absent">A</b><b class="t-absent">N</b><b class="t-absent">E</b></p>
       <p class="row"><b class="t-absent">H</b><b class="t-correct">U</b><b class="t-correct">M</b><b class="t-absent">I</b><b class="t-present">D</b></p>
@@ -98,32 +768,15 @@
   </figure>
 </section>
 
-<!-- EXCUSE GENERATOR -->
-<section class="chapter ch-blue" id="excuses" aria-labelledby="t-excuse">
-  <div class="chapter-copy">
-    <h2 id="t-excuse" data-reveal>Excuse Generator</h2>
-    <p class="lead" data-reveal>A perfectly good excuse. Believability sold separately.</p>
-    <p class="body" data-reveal>Pick your situation and the Department of Plausible Explanations handles the rest.</p>
-    <a class="button" data-reveal href="excuse-generator/index.html" target="_blank" rel="noopener">Get an excuse</a>
-  </div>
-  <figure class="chapter-figure fig-excuse" data-reveal>
-    <div class="slip is-static" data-ui aria-hidden="true" inert>
-      <p class="slip-head">Your official explanation</p>
-      <p class="slip-text" id="excuse-text">I had to walk my fish.</p>
-      <div class="slip-foot"><span id="excuse-cat">Being late</span><span class="slip-btn">Another one</span></div>
-    </div>
-  </figure>
-</section>
-
 <!-- FORTUNE COOKIE -->
 <section class="chapter ch-pink" id="fortune" aria-labelledby="t-fortune">
   <div class="chapter-copy">
-    <h2 id="t-fortune" data-reveal>Fortune Cookie</h2>
-    <p class="lead" data-reveal>A little wisdom. A little disrespect.</p>
-    <p class="body" data-reveal>Crack one open and see what fate has to say. Fate has opinions.</p>
-    <a class="button" data-reveal href="fortune-cookie/index.html" target="_blank" rel="noopener">Crack a cookie</a>
+    <h2 id="t-fortune"><small>05</small>Fortune Cookie</h2>
+    <p class="lead">A little wisdom. A little disrespect.</p>
+    <p class="body">Crack one open and see what fate has to say. Fate has opinions.</p>
+    <a class="button" href="fortune-cookie/index.html" target="_blank" rel="noopener">Crack a cookie</a>
   </div>
-  <figure class="chapter-figure fig-fortune" data-reveal>
+  <figure class="chapter-figure fig-fortune">
     <div class="cookie" data-ui>
       <svg viewBox="0 0 440 300" role="img" aria-label="A golden fortune cookie">
         <defs><linearGradient id="dough" x1="0" y1="0" x2="0.6" y2="1"><stop stop-color="#ffe0a0"/><stop offset=".52" stop-color="#edb755"/><stop offset="1" stop-color="#c97a29"/></linearGradient><linearGradient id="fold"><stop stop-color="#b66a23"/><stop offset="1" stop-color="#e3a64a"/></linearGradient></defs>
@@ -135,33 +788,15 @@
   </figure>
 </section>
 
-<!-- HOROSCOPE -->
-<section class="chapter ch-ink" id="horoscope" aria-labelledby="t-horo">
-  <div class="chapter-copy">
-    <h2 id="t-horo" data-reveal>Horoscope</h2>
-    <p class="lead" data-reveal>Written in the stars. Probably a typo.</p>
-    <p class="body" data-reveal>Give it your birthday, answer a few essential questions, and receive the universe’s honest opinion of you.</p>
-    <a class="button" data-reveal href="horoscope/index.html" target="_blank" rel="noopener">Read my stars</a>
-  </div>
-  <figure class="chapter-figure fig-horo" data-reveal>
-    <div class="ask" data-ui>
-      <p class="ask-count">Cosmic question 5 of 5</p>
-      <p class="ask-q">Is a hot dog a sandwich?</p>
-      <div class="ask-answers"><span class="ask-btn">Yes</span><span class="ask-btn is-on">No</span></div>
-      <p class="ask-note">Noted.</p>
-    </div>
-  </figure>
-</section>
-
 <!-- IQ TEST -->
 <section class="chapter ch-lilac" id="iq" aria-labelledby="t-iq">
   <div class="chapter-copy">
-    <h2 id="t-iq" data-reveal>IQ Test</h2>
-    <p class="lead" data-reveal>Ten questions. One very confident assessment.</p>
-    <p class="body" data-reveal>Rigorous questions, carefully chosen answers, and a score you will remember.</p>
-    <a class="button" data-reveal href="iq-test/index.html" target="_blank" rel="noopener">Test my brain</a>
+    <h2 id="t-iq"><small>06</small>IQ Test</h2>
+    <p class="lead">Ten questions. One very confident assessment.</p>
+    <p class="body">Rigorous questions, carefully chosen answers, and a score you will remember.</p>
+    <a class="button" href="iq-test/index.html" target="_blank" rel="noopener">Test my brain</a>
   </div>
-  <figure class="chapter-figure fig-iq" data-reveal>
+  <figure class="chapter-figure fig-iq">
     <div class="quiz" data-ui>
       <p class="quiz-meta"><span>Animal expertise</span><span>Question 10 of 10</span></p>
       <div class="quiz-bar"><i></i></div>
@@ -176,15 +811,33 @@
   </figure>
 </section>
 
+<!-- HOROSCOPE -->
+<section class="chapter ch-ink" id="horoscope" aria-labelledby="t-horo">
+  <div class="chapter-copy">
+    <h2 id="t-horo"><small>07</small>Horoscope</h2>
+    <p class="lead">Written in the stars. Probably a typo.</p>
+    <p class="body">Give it your birthday, answer a few essential questions, and receive the universe’s honest opinion of you.</p>
+    <a class="button" href="horoscope/index.html" target="_blank" rel="noopener">Read my stars</a>
+  </div>
+  <figure class="chapter-figure fig-horo">
+    <div class="ask" data-ui>
+      <p class="ask-count">Cosmic question 5 of 5</p>
+      <p class="ask-q">Is a hot dog a sandwich?</p>
+      <div class="ask-answers"><span class="ask-btn">Yes</span><span class="ask-btn is-on">No</span></div>
+      <p class="ask-note">Noted.</p>
+    </div>
+  </figure>
+</section>
+
 <!-- SORTING HAT -->
 <section class="chapter ch-blue" id="sorting-hat" aria-labelledby="t-hat">
   <div class="chapter-copy">
-    <h2 id="t-hat" data-reveal>The Sorting Hat</h2>
-    <p class="lead" data-reveal>Five questions. Four houses. One very opinionated hat.</p>
-    <p class="body" data-reveal>An unofficial sorting ceremony run by a hat with absolutely no qualifications.</p>
-    <a class="button" data-reveal href="sorting-hat/index.html" target="_blank" rel="noopener">Sort me</a>
+    <h2 id="t-hat"><small>08</small>The Sorting Hat</h2>
+    <p class="lead">Five questions. Four houses. One very opinionated hat.</p>
+    <p class="body">An unofficial sorting ceremony run by a hat with absolutely no qualifications.</p>
+    <a class="button" href="sorting-hat/index.html" target="_blank" rel="noopener">Sort me</a>
   </div>
-  <figure class="chapter-figure fig-hat" data-reveal>
+  <figure class="chapter-figure fig-hat">
     <div class="ask ask-paper" data-ui>
       <p class="ask-count">Question 1 of 5</p>
       <p class="ask-q">Do you believe in magic?</p>
@@ -194,33 +847,15 @@
   </figure>
 </section>
 
-<!-- ROCK PAPER SCISSORS -->
-<section class="chapter ch-orange" id="rock-paper-scissors" aria-labelledby="t-rps">
-  <div class="chapter-copy">
-    <h2 id="t-rps" data-reveal>Rock Paper Scissors</h2>
-    <p class="lead" data-reveal>Three choices. One finger gun. Skill issue.</p>
-    <p class="body" data-reveal>The classic, more or less. Pick your move and trust your instincts. Probably.</p>
-    <a class="button" data-reveal href="rock-paper-scissors/index.html" target="_blank" rel="noopener">Make my move</a>
-  </div>
-  <figure class="chapter-figure fig-rps" data-reveal>
-    <div class="score" data-ui role="img" aria-label="Scoreboard: you 0, opponent 12, after 12 rounds">
-      <div class="score-col"><span class="score-who">You</span><span class="score-n">0</span></div>
-      <div class="score-col"><span class="score-who">Opponent</span><span class="score-n">12</span></div>
-      <p class="score-foot">Round 13. Your move.</p>
-    </div>
-  </figure>
-</section>
-
-
 <!-- TO-DO TABLOID -->
 <section class="chapter ch-ink" id="to-do-tabloid" aria-labelledby="t-todo">
   <div class="chapter-copy">
-    <h2 id="t-todo" data-reveal>To-Do Tabloid</h2>
-    <p class="lead" data-reveal>Your ordinary tasks. Tomorrow’s front-page scandal.</p>
-    <p class="body" data-reveal>Name one everyday task. We’ll make its delay sound like a national emergency.</p>
-    <a class="button" data-reveal href="to-do-tabloid/index.html" target="_blank" rel="noopener">Read the paper</a>
+    <h2 id="t-todo"><small>09</small>To-Do Tabloid</h2>
+    <p class="lead">Your ordinary tasks. Tomorrow’s front-page scandal.</p>
+    <p class="body">Name one everyday task. We’ll make its delay sound like a national emergency.</p>
+    <a class="button" href="to-do-tabloid/index.html" target="_blank" rel="noopener">Read the paper</a>
   </div>
-  <figure class="chapter-figure fig-todo" data-reveal>
+  <figure class="chapter-figure fig-todo">
     <div class="slip" data-ui>
       <p class="slip-head">What’s the big story?</p>
       <p class="slip-text">Name one everyday task.</p>
@@ -232,12 +867,12 @@
 <!-- DOG TIME CONVERTER -->
 <section class="chapter ch-yellow" id="dog-time-converter" aria-labelledby="t-dog">
   <div class="chapter-copy">
-    <h2 id="t-dog" data-reveal>Dog Time Converter</h2>
-    <p class="lead" data-reveal>Your five-minute errand was a whole saga to the dog.</p>
-    <p class="body" data-reveal>Tell it how long you were away. It tells you how long that felt to someone waiting by the door.</p>
-    <a class="button" data-reveal href="dog-time-converter/index.html" target="_blank" rel="noopener">Convert my time</a>
+    <h2 id="t-dog"><small>10</small>Dog Time Converter</h2>
+    <p class="lead">Your five-minute errand was a whole saga to the dog.</p>
+    <p class="body">Tell it how long you were away. It tells you how long that felt to someone waiting by the door.</p>
+    <a class="button" href="dog-time-converter/index.html" target="_blank" rel="noopener">Convert my time</a>
   </div>
-  <figure class="chapter-figure fig-dog" data-reveal>
+  <figure class="chapter-figure fig-dog">
     <div class="ask ask-paper" data-ui>
       <p class="ask-count">How long were you away?</p>
       <p class="ask-q">5 minutes away</p>
@@ -249,12 +884,12 @@
 <!-- LAUNDRY LABEL DECODER -->
 <section class="chapter ch-lilac" id="laundry-label-decoder" aria-labelledby="t-laundry">
   <div class="chapter-copy">
-    <h2 id="t-laundry" data-reveal>Laundry Label Decoder</h2>
-    <p class="lead" data-reveal>Those tiny symbols have a lot to say about your sweater.</p>
-    <p class="body" data-reveal>Tap one symbol to get the practical instruction, and the garment’s very firm boundary.</p>
-    <a class="button" data-reveal href="laundry-label-decoder/index.html" target="_blank" rel="noopener">Decode a label</a>
+    <h2 id="t-laundry"><small>11</small>Laundry Label Decoder</h2>
+    <p class="lead">Those tiny symbols have a lot to say about your sweater.</p>
+    <p class="body">Tap one symbol to get the practical instruction, and the garment’s very firm boundary.</p>
+    <a class="button" href="laundry-label-decoder/index.html" target="_blank" rel="noopener">Decode a label</a>
   </div>
-  <figure class="chapter-figure fig-laundry" data-reveal>
+  <figure class="chapter-figure fig-laundry">
     <div class="ask" data-ui>
       <p class="ask-count">Pick a care symbol</p>
       <p class="ask-q">Tap one symbol.</p>
@@ -262,32 +897,213 @@
     </div>
   </figure>
 </section>
+  </div>
 
-</div>
+  <svg class="cord" id="cord" aria-hidden="true"></svg>
 </main>
 
-<footer class="foot" id="about" aria-labelledby="t-about">
-  <h2 class="foot-name" id="t-about">Dumb Little Internet</h2>
-  <div class="foot-row">
-    <div class="foot-about">
-      <p>Small websites with questionable purposes, made with curiosity and questionable judgment. Each one takes about a minute. None of them will make you more productive.</p>
-    </div>
-    <ul class="foot-games" id="foot-games">
-      <li><a class="foot-btn" href="67-calculator/index.html" target="_blank" rel="noopener">67 Calculator</a></li>
-      <li><a class="foot-btn" href="wordle-for-dummies/index.html" target="_blank" rel="noopener">Wordle for Dummies</a></li>
-      <li><a class="foot-btn" href="excuse-generator/index.html" target="_blank" rel="noopener">Excuse Generator</a></li>
-      <li><a class="foot-btn" href="fortune-cookie/index.html" target="_blank" rel="noopener">Fortune Cookie</a></li>
-      <li><a class="foot-btn" href="horoscope/index.html" target="_blank" rel="noopener">Horoscope</a></li>
-      <li><a class="foot-btn" href="iq-test/index.html" target="_blank" rel="noopener">IQ Test</a></li>
-      <li><a class="foot-btn" href="sorting-hat/index.html" target="_blank" rel="noopener">The Sorting Hat</a></li>
-      <li><a class="foot-btn" href="rock-paper-scissors/index.html" target="_blank" rel="noopener">Rock Paper Scissors</a></li>
-      <li><a class="foot-btn" href="to-do-tabloid/index.html" target="_blank" rel="noopener">To-Do Tabloid</a></li>
-      <li><a class="foot-btn" href="dog-time-converter/index.html" target="_blank" rel="noopener">Dog Time Converter</a></li>
-      <li><a class="foot-btn" href="laundry-label-decoder/index.html" target="_blank" rel="noopener">Laundry Label Decoder</a></li>
-    </ul>
-  </div>
-  <div class="foot-legal"><span>© 2026 The Dumb Little Internet. Independently unnecessary.</span><a href="#top" id="to-top">Back to the top</a></div>
-</footer>
+<script>
+(function () {
+  'use strict';
 
+  var GAMES = [
+    { name: '67 Calculator',         lines: ['67', 'Calculator'],        href: '67-calculator/index.html' },
+    { name: 'Excuse Generator',      lines: ['Excuse', 'Generator'],     href: 'excuse-generator/index.html' },
+    { name: 'Rock Paper Scissors',   lines: ['Rock Paper', 'Scissors'],  href: 'rock-paper-scissors/index.html' },
+    { name: 'Wordle for Dummies',    lines: ['Wordle for', 'Dummies'],   href: 'wordle-for-dummies/index.html' },
+    { name: 'Fortune Cookie',        lines: ['Fortune', 'Cookie'],       href: 'fortune-cookie/index.html' },
+    { name: 'IQ Test',               lines: ['IQ Test'],                 href: 'iq-test/index.html' },
+    { name: 'Horoscope',             lines: ['Horoscope'],               href: 'horoscope/index.html' },
+    { name: 'Sorting Hat',           lines: ['Sorting', 'Hat'],          href: 'sorting-hat/index.html' },
+    { name: 'To-Do Tabloid',         lines: ['To-Do', 'Tabloid'],        href: 'to-do-tabloid/index.html' },
+    { name: 'Dog Time Converter',    lines: ['Dog Time', 'Converter'],   href: 'dog-time-converter/index.html' },
+    { name: 'Laundry Label Decoder', lines: ['Laundry Label', 'Decoder'], href: 'laundry-label-decoder/index.html' }
+  ];
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var CX = 310, CY = 330, R = 278;           // wheel centre and slice radius
+  var STEP = 360 / GAMES.length;
+  var rotor = document.getElementById('rot');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function el(name, attrs) {
+    var node = document.createElementNS(NS, name);
+    for (var k in attrs) node.setAttribute(k, attrs[k]);
+    return node;
+  }
+  function pt(r, deg) {
+    var t = deg * Math.PI / 180;
+    return [CX + r * Math.cos(t), CY + r * Math.sin(t)];
+  }
+
+  /* Pick the text size and start radius that make each name fill its slice as fully as possible. */
+  function fit(lines) {
+    var longest = Math.max.apply(null, lines.map(function (l) { return l.length; }));
+    var best = { size: 0, r: 110 };
+    for (var r = 104; r <= 170; r += 2) {
+      var lengthCap = (R - 14 - r) / (longest * 0.58);
+      var widthCap = (r * STEP * Math.PI / 180 * 0.9) / (lines.length * 1.1);
+      var size = Math.min(lengthCap, widthCap, 46);
+      if (size > best.size + 0.05) best = { size: size, r: r };
+    }
+    return best;
+  }
+
+  GAMES.forEach(function (g, i) {
+    var a0 = -90 + i * STEP, a1 = a0 + STEP, mid = a0 + STEP / 2;
+    var p0 = pt(R, a0), p1 = pt(R, a1);
+    var seg = el('g', { 'class': 'seg' + (i % 2 ? ' alt' : '') });
+
+    seg.appendChild(el('path', {
+      'class': 'slice',
+      d: 'M' + CX + ',' + CY + ' L' + p0[0].toFixed(2) + ',' + p0[1].toFixed(2) +
+         ' A' + R + ',' + R + ' 0 0 1 ' + p1[0].toFixed(2) + ',' + p1[1].toFixed(2) + ' Z'
+    }));
+
+    var f = fit(g.lines);
+    var start = pt(f.r, mid);
+    var onRight = Math.cos(mid * Math.PI / 180) > -1e-9;     // keep text readable on both halves
+    var rotation = onRight ? mid : mid + 180;
+    var text = el('text', {
+      'class': 'lbl',
+      'font-size': f.size.toFixed(1),
+      'text-anchor': onRight ? 'start' : 'end',
+      'dominant-baseline': 'central',
+      transform: 'translate(' + start[0].toFixed(2) + ' ' + start[1].toFixed(2) + ') rotate(' + rotation.toFixed(2) + ')'
+    });
+    g.lines.forEach(function (line, j) {
+      var tspan = el('tspan', { x: 0, y: ((j - (g.lines.length - 1) / 2) * f.size * 1.08).toFixed(2) });
+      tspan.textContent = line;
+      text.appendChild(tspan);
+    });
+    seg.appendChild(text);
+    rotor.appendChild(seg);
+  });
+
+  /* ---------- Spin ---------- */
+  var spinBtn = document.getElementById('spin-btn');
+  var hub = document.getElementById('hub');
+  var result = document.getElementById('result');
+  var segs = rotor.querySelectorAll('.seg');
+  var angle = 0, spinning = false;
+
+  function clearWinner() {
+    for (var i = 0; i < segs.length; i++) segs[i].classList.remove('win');
+    result.hidden = true;
+  }
+
+  function showResult(game, index) {
+    segs[index].classList.add('win');
+    result.textContent = '';
+    var label = document.createElement('span'); label.className = 'r-label'; label.textContent = 'The wheel says';
+    var name = document.createElement('strong'); name.textContent = game.name;
+    var link = document.createElement('a'); link.href = game.href; link.textContent = 'Play it';
+    result.appendChild(label); result.appendChild(name); result.appendChild(link);
+    result.hidden = false;
+  }
+
+  function spin() {
+    if (spinning) return;
+    spinning = true;
+    spinBtn.disabled = true;
+    clearWinner();
+
+    var index = Math.floor(Math.random() * GAMES.length);
+    var jitter = (Math.random() - 0.5) * STEP * 0.6;           // land somewhere inside the slice, not always dead centre
+    var centreOffset = (index + 0.5) * STEP + jitter;           // clockwise degrees from the pointer to the slice
+    var current = ((angle % 360) + 360) % 360;
+    var delta = (((-centreOffset - current) % 360) + 360) % 360;
+    angle += 360 * 5 + delta;
+
+    rotor.style.transform = 'rotate(' + angle + 'deg)';
+
+    var ms = reduceMotion ? 50 : 5600;
+    window.setTimeout(function () {
+      showResult(GAMES[index], index);
+      spinning = false;
+      spinBtn.disabled = false;
+    }, ms + 150);
+  }
+
+  spinBtn.addEventListener('click', spin);
+  hub.addEventListener('click', spin);
+  hub.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); spin(); }
+  });
+
+  /* ---------- Scrolling ---------- */
+  function scrollToId(id) {
+    var target = document.getElementById(id);
+    if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+  document.getElementById('all-games').addEventListener('click', function (e) { e.preventDefault(); scrollToId('keyboard'); });
+
+  /* ---------- Coiled cable: monitor -> keyboard ---------- */
+  var main = document.getElementById('main');
+  var cord = document.getElementById('cord');
+  var plugTop = document.getElementById('plug-top');
+  var plugKb = document.getElementById('plug-kb');
+
+  function drawCord() {
+    var m = main.getBoundingClientRect();
+    var a = plugTop.getBoundingClientRect();
+    var b = plugKb.getBoundingClientRect();
+    var sx = a.left + a.width / 2 - m.left, sy = a.bottom - m.top - 1;
+    var ex = b.left + b.width / 2 - m.left, ey = b.top - m.top + 1;
+    var H = ey - sy;
+    if (H < 40) { cord.style.display = 'none'; return; }
+
+    var PAD = 40;
+    var left = Math.min(sx, ex) - PAD;
+    var W = Math.abs(ex - sx) + PAD * 2;
+    var x0 = sx - left, x1 = ex - left;
+
+    var turns = Math.max(3, Math.round(H / 26));
+    var pitch = H / turns;                       // vertical distance per coil
+    var R = 7, E = 3;                            // coil width and loop depth
+    var sway = window.innerWidth < 700 ? 8 : 18; // gentle S-bend so it reads as slack
+
+    var d = '';
+    var tEnd = turns * 2 * Math.PI;
+    for (var t = 0; ; t += 0.14) {
+      var last = t >= tEnd;
+      if (last) t = tEnd;
+      var y = pitch * t / (2 * Math.PI) - E * Math.cos(t) + E;
+      var k = y / H;
+      var x = x0 + (x1 - x0) * k + sway * Math.sin(2 * Math.PI * k) + R * Math.sin(t);
+      d += (d ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1);
+      if (last) break;
+    }
+
+    cord.style.display = 'block';
+    cord.style.left = left + 'px';
+    cord.style.top = sy + 'px';
+    cord.setAttribute('width', W);
+    cord.setAttribute('height', H);
+    cord.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    cord.textContent = '';
+    [['#0b0e11', 6.6, 0.55], ['#c3ccd5', 3.4, 1]].forEach(function (s) {
+      var p = el('path', { d: d, fill: 'none', stroke: s[0], 'stroke-width': s[1], 'stroke-opacity': s[2], 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+      cord.appendChild(p);
+    });
+  }
+  drawCord();
+  window.addEventListener('load', drawCord);
+  window.addEventListener('resize', drawCord);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawCord);
+  if (window.ResizeObserver) new ResizeObserver(drawCord).observe(main);
+
+  /* ---------- Taskbar clock ---------- */
+  var timeEl = document.getElementById('clock-time');
+  var dateEl = document.getElementById('clock-date');
+  function tick() {
+    var now = new Date();
+    timeEl.textContent = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    dateEl.textContent = now.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: 'numeric' });
+  }
+  tick();
+  window.setInterval(tick, 20000);
+})();
+</script>
 </body>
 </html>
