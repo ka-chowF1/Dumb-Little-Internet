@@ -54,7 +54,7 @@
       var filePromise = p.makeFile ? Promise.resolve().then(p.makeFile).catch(function () { return null; }) : Promise.resolve(null);
       filePromise.then(function (file) {
         if (usesShareSheet()) {
-          var data = { title: p.title || 'The Dumb Little Internet', text: p.text, url: url };
+          var data = p.text ? { title: p.title || 'The Dumb Little Internet', text: p.text, url: url } : { url: url };
           if (file && navigator.canShare && navigator.canShare({ files: [file] })) data.files = [file];
           return navigator.share(data).catch(function () {});
         }
@@ -87,7 +87,7 @@
       '.tdli-share-btn:hover{transform:translateY(-2px)}.tdli-share-btn:active{transform:translateY(2px);box-shadow:none}' +
       '.tdli-share-btn:focus-visible{outline:3px solid var(--ts-fg,#fff);outline-offset:3px}' +
       '.tdli-share-btn svg{width:18px;height:18px}' +
-      '.tdli-share-status{min-width:10ch;font:700 14px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ts-st,inherit)}';
+      '.tdli-share-status:empty{display:none}.tdli-share-status{min-width:10ch;font:700 14px/1.3 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ts-st,inherit)}';
     document.head.appendChild(st);
   }
   window.tdliShareRow = function (opts) {
