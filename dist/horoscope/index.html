@@ -35,4 +35,17 @@
 <p class="privacy">No birth date data is collected or stored. Everything stays in this page and clears on refresh.</p>
 <footer><span>FOR ENTERTAINMENT. THE STARS ARE WINGING IT.</span><span>✦ TRUST YOURSELF FIRST.</span></footer>
 </main>
+<script src="../assets/js/share.js"></script>
+<script>
+tdliShareRow({
+  anchor: document.getElementById('restart'),
+  vars: { bg: '#e8c985', fg: '#211c35', sh: '#8f7437', st: '#e8c985' },
+  getPayload: function () {
+    var sign = document.getElementById('result-title').textContent.trim();
+    var h = document.getElementById('fortune').textContent.trim();
+    if (!h) return 'Get your horoscope first!';
+    return { title: 'My horoscope', text: sign + ': ' + h + ' \u2014 my horoscope from the Dumb Little Internet. Get yours:' };
+  }
+});
+</script>
 </body></html>

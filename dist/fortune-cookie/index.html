@@ -48,5 +48,18 @@
     </section>
     <footer><span>BAKED WITH QUESTIONABLE INTENTIONS</span><span>NO REFUNDS ON DESTINY. <span aria-hidden="true">✦</span></span></footer>
   </main>
+<script src="../assets/js/share.js"></script>
+<script>
+tdliShareRow({
+  anchor: document.querySelector('.experience'),
+  vars: { bg: '#ac392b', fg: '#ffffff', sh: '#6e1f16', st: '#422e24' },
+  watch: { el: document.getElementById('slip'), attr: 'aria-hidden', show: function (v) { return v === 'false'; } },
+  getPayload: function () {
+    var f = document.getElementById('fortune').textContent.trim();
+    if (!f) return 'Crack the cookie first!';
+    return { title: 'My fortune', text: '\u201c' + f + '\u201d \u2014 my fortune cookie from the Dumb Little Internet. Crack yours:' };
+  }
+});
+</script>
 </body>
 </html>
