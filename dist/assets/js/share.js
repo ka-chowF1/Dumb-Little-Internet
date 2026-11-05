@@ -4,12 +4,13 @@
    tdliShareRow({...})                              create a button + status and place it on the page
    Payload: { text, url?, title?, makeFile?: () => Promise<File> } */
 (function () {
-  var LIVE = 'https://ka-chowf1.github.io/dumb-little-internet/';
+  var LIVE = 'https://dumbnet.games/';
+  var GAMES = ['67-calculator','excuse-generator','rock-paper-scissors','wordle-for-dummies','fortune-cookie','iq-test','horoscope','sorting-hat','to-do-tabloid','dog-time-converter','laundry-label-decoder'];
 
+  // Shared links always point at the live site, whichever address the visitor is on right now.
   function pageUrl() {
-    if (/^https?:$/.test(location.protocol)) return location.origin + location.pathname.replace(/index\.html$/, '');
-    var parts = location.pathname.split('/').filter(Boolean);
-    var folder = parts.length > 1 ? parts[parts.length - 2] + '/' : '';
+    var parts = location.pathname.split('/').filter(Boolean), folder = '';
+    for (var i = 0; i < parts.length; i++) { if (GAMES.indexOf(parts[i]) !== -1) { folder = parts[i] + '/'; break; } }
     return LIVE + folder;
   }
   function usesShareSheet() {

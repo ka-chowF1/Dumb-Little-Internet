@@ -87,7 +87,7 @@ document.getElementById('clear').addEventListener('click',function(){input.value
       doc.setLineWidth(0.8); doc.setDrawColor(33, 28, 25); doc.line(M, H - 90, W - M, H - 90);
       doc.setFontSize(10); doc.setTextColor(33, 28, 25);
       doc.text('Make your own headline at the Dumb Little Internet', M, H - 68);
-      doc.setTextColor(215, 45, 34); doc.text('ka-chowf1.github.io/dumb-little-internet/to-do-tabloid/', M, H - 52);
+      doc.setTextColor(215, 45, 34); doc.text('dumbnet.games/to-do-tabloid/', M, H - 52);
       var name = 'to-do-tabloid.pdf';
       return new File([doc.output('blob')], name, { type: 'application/pdf' });
     });
