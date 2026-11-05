@@ -559,6 +559,16 @@
   .about-legal { margin-top: clamp(40px, 6vw, 80px); padding: clamp(20px, 2.4vw, 32px); border-radius: 12px; background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); border: 1px solid rgba(255,255,255,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
   .about-legal h3 { margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.85); }
   .about-legal p { margin: 0; max-width: 70ch; font-size: 14px; line-height: 1.65; color: rgba(255,255,255,.66); }
+  .about-privacy { margin-top: 20px; }
+  .about-privacy .pp-lead { color: rgba(255,255,255,.88); font-size: 15px; margin-bottom: 14px; }
+  .about-privacy ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 14px clamp(24px, 4vw, 56px); max-width: none; }
+  .about-privacy li { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,.66); }
+  .about-privacy li b { color: rgba(255,255,255,.92); font-weight: 600; }
+  .about-privacy a, .about-privacy .pp-link { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+  .about-privacy .pp-link { all: unset; cursor: pointer; color: #fff; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+  .about-privacy .pp-link:focus-visible { outline: 2px solid #c5fa66; outline-offset: 2px; }
+  #privacy { scroll-margin-top: 24px; }
+  @media (max-width: 760px) { .about-privacy ul { grid-template-columns: 1fr; } }
   .about-foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: clamp(40px, 6vw, 72px); padding-top: 22px; border-top: 1px solid rgba(255,255,255,.1); font-size: 13px; color: rgba(255,255,255,.55); }
   .about-foot a { color: #fff; }
   @media (max-width: 760px) { .about-cols { grid-template-columns: 1fr; } }
@@ -957,7 +967,21 @@
         <h3>Legal disclosure</h3>
         <p>No copyright infringement was intended in the making of any game on this site. The games are original creations made for entertainment and in a spirit of parody. Any similarity to existing games, characters, names or trademarks is coincidental or playful, and all trademarks and copyrights belong to their respective owners. This site is not affiliated with, endorsed by or sponsored by any other game, brand or company.</p>
       </div>
-      <div class="about-foot"><span>&copy; 2026 The Dumb Little Internet. Independently unnecessary.</span><a href="#screen">Back to the top</a></div>
+      <div class="about-legal about-privacy" id="privacy">
+        <h3>Privacy policy</h3>
+        <p class="pp-lead">Short version: there are no accounts, nothing to sign up for, and we do not sell anything about you. Last updated November 4, 2026.</p>
+        <ul>
+          <li><b>What you type stays with you.</b> Everything you enter into a game (an excuse situation, a to-do, a name) is handled in your own browser and is never sent to us.</li>
+          <li><b>Analytics, only if you say yes.</b> If you click Accept on the cookie notice, we use Microsoft Clarity to learn which games get played. Clarity uses cookies and may collect anonymous usage details such as pages viewed, clicks, scrolling, device and browser type, and approximate location, and may record sessions. It is run by Microsoft under <a href="https://privacy.microsoft.com/privacystatement" target="_blank" rel="noopener">its own privacy statement</a>. If you click No thanks, it never loads.</li>
+          <li><b>Your cookie choice</b> is saved in your browser so we do not ask every time. <button type="button" class="pp-link" onclick="tdliCookieChoice()">Change my cookie choice</button></li>
+          <li><b>Hosting.</b> This site is hosted on GitHub Pages, which, like any web host, may log technical information such as your IP address when you visit.</li>
+          <li><b>Sharing.</b> The Share buttons use your device&rsquo;s own share menu or copy text to your clipboard. Nothing is sent through us.</li>
+          <li><b>Ads.</b> There are none right now. If that changes, this policy will be updated first.</li>
+          <li><b>Kids.</b> This site is not aimed at children under 13 and we do not knowingly collect their information.</li>
+          <li><b>Changes.</b> If this policy changes, the date above will change too.</li>
+        </ul>
+      </div>
+      <div class="about-foot"><span>&copy; 2026 The Dumb Little Internet. Independently unnecessary.</span><span><a href="#privacy">Privacy policy</a> &nbsp;&middot;&nbsp; <a href="#screen">Back to the top</a></span></div>
     </div>
   </section>
 
