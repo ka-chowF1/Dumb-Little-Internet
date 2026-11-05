@@ -50,8 +50,8 @@
     var th = opts.theme || {};
     var css = document.createElement('style');
     css.textContent =
-      '.tdli-more{box-sizing:border-box;width:100%;max-width:960px;margin:var(--tdli-gap-d,104px) auto 0;padding:0 20px clamp(40px,6vw,64px);font-family:' + (th.font || 'Arial,Helvetica,sans-serif') + '}' +
-      '.tdli-more *{box-sizing:border-box}' +
+      '.tdli-more{box-sizing:border-box;width:min(960px,calc(100vw - 40px));max-width:none;margin:var(--tdli-gap-d,104px) auto 0;padding:0 0 clamp(40px,6vw,64px);font-family:' + (th.font || 'Arial,Helvetica,sans-serif') + '}' +
+      '.tdli-more *{box-sizing:border-box}.tdli-more,.tdli-more *{text-align:left;letter-spacing:normal;text-transform:none}.tdli-more-label{text-transform:uppercase!important;letter-spacing:1.6px!important}.tdli-more-play{text-transform:uppercase!important;letter-spacing:1px!important}' +
       '.tdli-more-label{display:inline-block;width:auto;height:auto;min-height:0;max-width:100%;margin:0 0 16px;padding:8px 14px;box-shadow:none;transform:none;position:static;text-align:left;border:1px solid ' + (th.border || 'rgba(255,255,255,.22)') + ';border-radius:8px;font:700 12px/1 ' + (th.mono || 'monospace') + ';letter-spacing:1.6px;text-transform:uppercase;color:' + (th.label || '#c5fa66') + ';background:' + (th.labelBg || 'transparent') + '}' +
       '.tdli-more-row{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,20px);list-style:none;margin:0;padding:0}' +
       '.tdli-more-card{display:flex;flex-direction:column;height:100%;text-decoration:none;color:' + (th.ink || '#f0f1ed') + ';background:' + (th.card || '#20231f') + ';border:1px solid ' + (th.border || 'rgba(255,255,255,.14)') + ';border-radius:16px;overflow:hidden;transition:transform .18s ease,border-color .18s ease}' +
@@ -63,7 +63,8 @@
       '.tdli-more-name{font-weight:700;font-size:clamp(13px,1.6vw,16px);line-height:1.2}' +
       '.tdli-more-teaser{font-size:13px;line-height:1.35;color:' + (th.muted || '#a7ada1') + '}' +
       '.tdli-more-play{margin-top:4px;font:700 12px/1 ' + (th.mono || 'monospace') + ';letter-spacing:1px;text-transform:uppercase;color:' + (th.label || '#c5fa66') + '}' +
-      '@media (max-width:560px){.tdli-more{margin-top:var(--tdli-gap-m,80px);padding-left:14px;padding-right:14px}.tdli-more-teaser{display:none}.tdli-more-body{padding:9px 9px 11px}.tdli-more-name{font-size:12px}.tdli-more-play{font-size:10px}}' +
+      '@media (min-width:561px) and (max-width:1000px){.tdli-more-body{min-height:112px}}' +
+      '@media (max-width:560px){.tdli-more{margin-top:var(--tdli-gap-m,80px);width:calc(100vw - 28px)}.tdli-more-teaser{display:none}.tdli-more-body{padding:9px 9px 11px}.tdli-more-name{font-size:12px}.tdli-more-play{font-size:10px}}' +
       '@media (prefers-reduced-motion:reduce){.tdli-more-card{transition:none}.tdli-more-card:hover{transform:none}}';
     document.head.appendChild(css);
 
@@ -80,7 +81,17 @@
     });
     sec.appendChild(label); sec.appendChild(row);
     var ref = opts.before || document.querySelector('footer');
-    if (!ref) { var m = document.querySelector('main'); ref = m ? m.nextSibling : null; if (m && !ref) { m.parentNode.appendChild(sec); return; } }
-    if (ref && ref.parentNode) ref.parentNode.insertBefore(sec, ref); else document.body.appendChild(sec);
+    if (!ref) { var m = document.querySelector('main'); ref = m ? m.nextSibling : null; if (m && !ref) { m.parentNode.appendChild(sec); ref = sec; } }
+    if (ref === sec) { /* already placed */ } else if (ref && ref.parentNode) ref.parentNode.insertBefore(sec, ref); else document.body.appendChild(sec);
+    // Same size and position on every page: centre on the screen even when the page's own column is narrower.
+    function centre() {
+      sec.style.transform = '';
+      var r = sec.getBoundingClientRect();
+      var d = document.documentElement.clientWidth / 2 - (r.left + r.width / 2);
+      if (Math.abs(d) > 0.5) sec.style.transform = 'translateX(' + d + 'px)';
+    }
+    centre();
+    window.addEventListener('resize', centre);
+    window.addEventListener('load', centre);
   };
 })();
